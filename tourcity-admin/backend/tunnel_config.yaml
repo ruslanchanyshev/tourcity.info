@@ -1,7 +1,0 @@
-tunnel: 9d4a9e37-d8cc-46de-a05d-13a3507c61b5
-credentials-file: /Users/rch/.cloudflared/9d4a9e37-d8cc-46de-a05d-13a3507c61b5.json
-
-ingress:
-  - hostname: api.tourcity.info
-    service: http://localhost:3001
-  - service: http_status:404
