@@ -1,0 +1,237 @@
+[
+  {
+    "header": "id",
+    "index": 0,
+    "count": 92
+  },
+  {
+    "header": "category",
+    "index": 1,
+    "count": 92
+  },
+  {
+    "header": "name_ru",
+    "index": 2,
+    "count": 92
+  },
+  {
+    "header": "name_en",
+    "index": 3,
+    "count": 90
+  },
+  {
+    "header": "name_vi",
+    "index": 4,
+    "count": 90
+  },
+  {
+    "header": "name_ko",
+    "index": 5,
+    "count": 90
+  },
+  {
+    "header": "name_es",
+    "index": 6,
+    "count": 90
+  },
+  {
+    "header": "name_zh",
+    "index": 7,
+    "count": 90
+  },
+  {
+    "header": "name_fr",
+    "index": 8,
+    "count": 90
+  },
+  {
+    "header": "desc_ru",
+    "index": 9,
+    "count": 90
+  },
+  {
+    "header": "desc_en",
+    "index": 10,
+    "count": 90
+  },
+  {
+    "header": "desc_vi",
+    "index": 11,
+    "count": 90
+  },
+  {
+    "header": "desc_ko",
+    "index": 12,
+    "count": 90
+  },
+  {
+    "header": "desc_es",
+    "index": 13,
+    "count": 90
+  },
+  {
+    "header": "desc_zh",
+    "index": 14,
+    "count": 90
+  },
+  {
+    "header": "desc_fr",
+    "index": 15,
+    "count": 90
+  },
+  {
+    "header": "all_tags",
+    "index": 16,
+    "count": 85
+  },
+  {
+    "header": "lat",
+    "index": 17,
+    "count": 92
+  },
+  {
+    "header": "lon",
+    "index": 18,
+    "count": 92
+  },
+  {
+    "header": "address",
+    "index": 19,
+    "count": 66
+  },
+  {
+    "header": "",
+    "index": 20,
+    "count": 0
+  },
+  {
+    "header": "website",
+    "index": 21,
+    "count": 30
+  },
+  {
+    "header": "hours",
+    "index": 22,
+    "count": 72
+  },
+  {
+    "header": "price",
+    "index": 23,
+    "count": 89
+  },
+  {
+    "header": "rating",
+    "index": 24,
+    "count": 91
+  },
+  {
+    "header": "images",
+    "index": 25,
+    "count": 16
+  },
+  {
+    "header": "featured",
+    "index": 26,
+    "count": 40
+  },
+  {
+    "header": "ext_1",
+    "index": 27,
+    "count": 85
+  },
+  {
+    "header": "ext_2",
+    "index": 28,
+    "count": 3
+  },
+  {
+    "header": "ext_3",
+    "index": 29,
+    "count": 9
+  },
+  {
+    "header": "ext_4",
+    "index": 30,
+    "count": 4
+  },
+  {
+    "header": "ext_5",
+    "index": 31,
+    "count": 78
+  },
+  {
+    "header": "ext_6",
+    "index": 32,
+    "count": 0
+  },
+  {
+    "header": "ext_7",
+    "index": 33,
+    "count": 0
+  },
+  {
+    "header": "ext_8",
+    "index": 34,
+    "count": 0
+  },
+  {
+    "header": "ext_9",
+    "index": 35,
+    "count": 0
+  },
+  {
+    "header": "ext_10",
+    "index": 36,
+    "count": 0
+  },
+  {
+    "header": "ext_11",
+    "index": 37,
+    "count": 0
+  },
+  {
+    "header": "ext_12",
+    "index": 38,
+    "count": 0
+  },
+  {
+    "header": "ext_13",
+    "index": 39,
+    "count": 0
+  },
+  {
+    "header": "ext_14",
+    "index": 40,
+    "count": 0
+  },
+  {
+    "header": "ext_15",
+    "index": 41,
+    "count": 0
+  },
+  {
+    "header": "ext_16",
+    "index": 42,
+    "count": 0
+  },
+  {
+    "header": "ext_17",
+    "index": 43,
+    "count": 0
+  },
+  {
+    "header": "ext_18",
+    "index": 44,
+    "count": 0
+  },
+  {
+    "header": "ext_19",
+    "index": 45,
+    "count": 0
+  },
+  {
+    "header": "ext_20",
+    "index": 46,
+    "count": 0
+  }
+]

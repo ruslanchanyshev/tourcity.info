@@ -1,3 +1,24 @@
+# Security & Privacy
 service-account.json
-tourcity-admin/backend/service-account.json
+.env
+*.key
+*.pem
+google-services.json
+GoogleService-Info.plist
+
+# Local-only Source Code
 tourcity-admin/
+TourCity/
+TourCity.xcodeproj/
+
+# Dependencies & Build artifacts
+node_modules/
+dist/
+.cache/
+.eslintcache
+
+# System files
+.DS_Store
+Thumbs.db
+*.xcuserstate
+*.xcuserdatad
