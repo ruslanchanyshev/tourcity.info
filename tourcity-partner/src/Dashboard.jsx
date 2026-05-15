@@ -302,7 +302,7 @@ const Dashboard = () => {
                     </div>
                     <div>
                       <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.telegram}</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.ext_12 || ''} onChange={e => handleChange('ext_12', e.target.value)} placeholder="username" />
+                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.tg_bot || ''} onChange={e => handleChange('tg_bot', e.target.value)} placeholder="username" />
                     </div>
                   </div>
                   
@@ -324,8 +324,37 @@ const Dashboard = () => {
                     </div>
                   )}
                   <div style={{ marginTop: 12 }}>
-                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.workingHours}</label>
-                    <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.hours || ''} onChange={e => handleChange('hours', e.target.value)} placeholder="09:00 - 22:00" />
+                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{t.workingHours}</span>
+                      <span 
+                        onClick={() => handleChange('hours', selectedPoi.hours === '24/7' ? '' : '24/7')}
+                        style={{ color: selectedPoi.hours === '24/7' ? 'var(--accent-gold)' : 'inherit', cursor: 'pointer', opacity: selectedPoi.hours === '24/7' ? 1 : 0.6 }}
+                      >
+                        24/7
+                      </span>
+                    </label>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', opacity: selectedPoi.hours === '24/7' ? 0.5 : 1, pointerEvents: selectedPoi.hours === '24/7' ? 'none' : 'auto' }}>
+                      <input 
+                        type="time"
+                        style={{ padding: 8, fontSize: 13, flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', border: 'none', borderRadius: 8, outline: 'none' }} 
+                        value={selectedPoi.hours === '24/7' ? '' : (selectedPoi.hours || '').split(' - ')[0] || ''} 
+                        onChange={e => {
+                          const parts = (selectedPoi.hours || '').split(' - ');
+                          const end = parts.length > 1 ? parts[1] : '';
+                          handleChange('hours', `${e.target.value}${end ? ' - ' + end : ' - '}`);
+                        }} 
+                      />
+                      <span style={{ color: 'var(--text-muted)' }}>—</span>
+                      <input 
+                        type="time"
+                        style={{ padding: 8, fontSize: 13, flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', border: 'none', borderRadius: 8, outline: 'none' }} 
+                        value={selectedPoi.hours === '24/7' ? '' : (selectedPoi.hours || '').split(' - ')[1] || ''} 
+                        onChange={e => {
+                          const start = (selectedPoi.hours || '').split(' - ')[0] || '';
+                          handleChange('hours', `${start} - ${e.target.value}`);
+                        }} 
+                      />
+                    </div>
                   </div>
                 </div>
               )}
