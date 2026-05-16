@@ -24,6 +24,13 @@ struct POI: Identifiable, Codable, Hashable {
     let imageNames: [String]
     let isFeatured: Bool
     
+    // Social & Contact
+    let inst: String?
+    let tg: String?
+    let wtsp: String?
+    let site: String?
+    let call: String?
+    
     // Запасные поля на будущее
     let extraMetadata: [String: String] // ["ext_1": "...", "ext_2": "...", "ext_6": "имя_логотипа"]
     
@@ -47,9 +54,10 @@ struct POI: Identifiable, Codable, Hashable {
         return UIImage(named: assetName) != nil
     }
     
-    /// Скидка, подтягиваемая из запасного поля ext_2
+    /// Скидка, подтягиваемая из поля size_discount (или старого ext_2)
     var discount: Int? {
-        if let ext2 = extraMetadata["ext_2"], let value = Int(ext2.trimmingCharacters(in: .whitespaces)) {
+        let raw = extraMetadata["size_discount"] ?? extraMetadata["ext_2"]
+        if let val = raw, let value = Int(val.trimmingCharacters(in: .whitespaces)) {
             return value
         }
         return nil
@@ -57,19 +65,28 @@ struct POI: Identifiable, Codable, Hashable {
     
     /// Является ли предложение специальным (не в процентах, а подарок/бонус)
     var isSpecialOffer: Bool {
-        extraMetadata["ext_2"]?.trimmingCharacters(in: .whitespaces) == "Special"
+        let raw = extraMetadata["size_discount"] ?? extraMetadata["ext_2"]
+        return raw?.trimmingCharacters(in: .whitespaces) == "Special"
     }
     
-    /// Дополнительная информация по скидке (правила, условия) из поля ext_4.
+    /// Скидка на весь чек (код 100)
+    var isFullCheckDiscount: Bool {
+        let raw = extraMetadata["info_discount"] ?? extraMetadata["ext_4"]
+        return raw?.trimmingCharacters(in: .whitespaces) == "100"
+    }
+    
+    /// Дополнительная информация по скидке из поля info_discount (или старых ext_4, ext_6).
     /// Поддерживает числовые коды для автоматической локализации.
     var extraDiscountInfo: String? {
-        guard let raw = extraMetadata["ext_4"]?.trimmingCharacters(in: .whitespaces), !raw.isEmpty else {
+        let raw = (extraMetadata["info_discount"] ?? extraMetadata["ext_4"] ?? extraMetadata["ext_6"])?.trimmingCharacters(in: .whitespaces)
+        
+        guard let value = raw, !value.isEmpty else {
             return nil
         }
         
         // Если это числовой код, пробуем найти перевод
-        if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: raw)) {
-            let key = "disc_code_\(raw)"
+        if CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: value)) {
+            let key = "disc_code_\(value)"
             let localized = LocalizationManager.shared.string(for: key)
             
             // Если перевод нашелся (ключ не вернулся обратно), возвращаем его
@@ -79,12 +96,14 @@ struct POI: Identifiable, Codable, Hashable {
         }
         
         // В противном случае возвращаем как есть (для кастомного текста)
-        return raw
+        return value
     }
     
-    /// Дата окончания скидки из поля ext_3 (поддерживает форматы YYYY-MM-DD, DD.MM.YYYY, DD/MM/YYYY)
+    /// Дата окончания скидки из поля exp_discount (или старого ext_3)
+    /// Поддерживает форматы YYYY-MM-DD, DD.MM.YYYY, DD/MM/YYYY
     var discountExpiryDate: Date? {
-        guard let dateString = extraMetadata["ext_3"]?.trimmingCharacters(in: .whitespaces), !dateString.isEmpty else {
+        let raw = extraMetadata["exp_discount"] ?? extraMetadata["ext_3"]
+        guard let dateString = raw?.trimmingCharacters(in: .whitespaces), !dateString.isEmpty else {
             return nil
         }
         
@@ -138,25 +157,45 @@ struct POI: Identifiable, Codable, Hashable {
         return uniquePublicTags
     }
     
-    /// Информация о ближайшем событии (ext_7–ext_11)
+    /// Информация о ближайшем событии (ext_7–ext_11 или семантические ключи)
     var eventName: String? {
-        guard let name = extraMetadata["ext_7"]?.trimmingCharacters(in: .whitespaces), !name.isEmpty else { return nil }
+        let raw = extraMetadata["event_name"] ?? extraMetadata["event"] ?? extraMetadata["ext_7"]
+        guard let name = raw?.trimmingCharacters(in: .whitespaces), !name.isEmpty else { return nil }
         return name
     }
     
-    var eventDate: String? { extraMetadata["ext_8"]?.trimmingCharacters(in: .whitespaces) }
-    var eventTime: String? { extraMetadata["ext_9"]?.trimmingCharacters(in: .whitespaces) }
-    var eventLocation: String? { extraMetadata["ext_10"]?.trimmingCharacters(in: .whitespaces) }
-    var eventConditions: String? { extraMetadata["ext_11"]?.trimmingCharacters(in: .whitespaces) }
+    var eventDate: String? { (extraMetadata["day_event"] ?? extraMetadata["event_date"] ?? extraMetadata["ext_8"])?.trimmingCharacters(in: .whitespaces) }
+    var eventTime: String? { (extraMetadata["time_event"] ?? extraMetadata["event_time"] ?? extraMetadata["ext_9"])?.trimmingCharacters(in: .whitespaces) }
+    var eventLocation: String? { (extraMetadata["place_event"] ?? extraMetadata["event_location"] ?? extraMetadata["ext_10"])?.trimmingCharacters(in: .whitespaces) }
+    var eventConditions: String? { (extraMetadata["information"] ?? extraMetadata["event_conditions"] ?? extraMetadata["ext_11"])?.trimmingCharacters(in: .whitespaces) }
     
     /// Дата события в формате Date для сравнения
     var eventDateObj: Date? {
         guard let dateString = eventDate, !dateString.isEmpty else { return nil }
         
-        let formats = ["dd.MM.yyyy", "yyyy-MM-dd", "dd/MM/yyyy"]
+        let formats = [
+            "dd.MM.yyyy", "yyyy-MM-dd", "dd/MM/yyyy",
+            "dd.MM.yy", "dd.MM", "d.M.yyyy", "d.M.yy"
+        ]
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         
+        // Если в дате нет года (например, "19.05"), добавляем текущий год
+        var finalDateString = dateString
+        let components = dateString.components(separatedBy: CharacterSet(charactersIn: "./-"))
+        if components.count == 2 {
+            let year = Calendar.current.component(.year, from: Date())
+            finalDateString = "\(dateString).\(year)"
+        }
+        
+        for format in formats {
+            formatter.dateFormat = format
+            if let date = formatter.date(from: finalDateString) {
+                return date
+            }
+        }
+        
+        // Вторая попытка с оригинальной строкой
         for format in formats {
             formatter.dateFormat = format
             if let date = formatter.date(from: dateString) {
@@ -248,6 +287,37 @@ struct POI: Identifiable, Codable, Hashable {
     
     static func == (lhs: POI, rhs: POI) -> Bool {
         lhs.id == rhs.id
+    }
+    
+    /// Проверка соответствия поисковому запросу
+    func matchesSearch(_ text: String) -> Bool {
+        let query = text.lowercased().trimmingCharacters(in: .whitespaces)
+        if query.isEmpty { return true }
+        
+        // 1. Поиск по ID
+        if id.lowercased().contains(query) { return true }
+        
+        // 2. Поиск по всем именам (все языки)
+        for name in names.values {
+            if name.lowercased().contains(query) { return true }
+        }
+        
+        // 3. Поиск по всем описаниям
+        for desc in descriptions.values {
+            if desc.lowercased().contains(query) { return true }
+        }
+        
+        // 4. Поиск по тегам
+        for langTags in localizedTags.values {
+            for tag in langTags {
+                if tag.lowercased().contains(query) { return true }
+            }
+        }
+        
+        // 5. Поиск по адресу
+        if let address = address, address.lowercased().contains(query) { return true }
+        
+        return false
     }
 }
 
@@ -401,6 +471,15 @@ enum POICategory: String, Codable, CaseIterable, Identifiable {
         // Use a generic primary color for all service categories for now
         case .beauty, .hair, .health, .fitness, .photo_video, .legal_visa, .real_estate, .home_services, .tech_repair, .auto_moto, .kids, .education, .events, .flowers, .pets, .delivery, .tattoo, .astrology:
             return "tcPrimary"
+        }
+    }
+    
+    var isService: Bool {
+        switch self {
+        case .beauty, .hair, .health, .fitness, .photo_video, .legal_visa, .real_estate, .home_services, .tech_repair, .auto_moto, .kids, .education, .events, .flowers, .pets, .delivery, .tattoo, .astrology:
+            return true
+        default:
+            return false
         }
     }
 }

@@ -214,22 +214,25 @@ class DataManager: ObservableObject {
     // MARK: - Discounts Logic
     
     func updateDiscountPartners() {
-        // Берем все POI (и из основного города, и из сервисов)
-        var allPois = currentCity?.pois ?? []
-        allPois.append(contentsOf: services)
+        // Берем POI только из основного города (заведения), чтобы скидки мастеров не смешивались
+        let cityPois = currentCity?.pois ?? []
         
-        // Фильтруем по нашему строгому правилу (>= 1% и наличие даты)
-        let active = allPois.filter { $0.isValidDiscount }
+        // Фильтруем по строгому правилу (>= 1% и наличие даты)
+        // Дополнительно страхуемся, чтобы точно не попали категории услуг
+        let active = cityPois.filter { $0.isValidDiscount && !$0.category.isService }
         
         self.discountPartners = active
-        print("[DataManager] Data refresh complete. Found \(allPois.count) POIs total, \(active.count) active valid discounts.")
+        print("[DataManager] Data refresh complete. Found \(cityPois.count) places total, \(active.count) active valid discounts for places.")
     }
     
-    /// Список категорий, которые реально присутствуют в текущих данных города
+    /// Список категорий, которые реально присутствуют в текущих данных (город + услуги)
     var activeCategories: [POICategory] {
         let cityPois = currentCity?.pois ?? []
-        // Берем уникальные категории из всех точек города
-        let categoriesInUse = Set(cityPois.map { $0.category })
+        let servicePois = services
+        
+        // Берем уникальные категории из всех точек города и мастеров
+        let categoriesInUse = Set((cityPois + servicePois).map { $0.category })
+        
         // Возвращаем их в порядке, определенном в POICategory.allCases, но только те, что используются
         return POICategory.allCases.filter { categoriesInUse.contains($0) }
     }

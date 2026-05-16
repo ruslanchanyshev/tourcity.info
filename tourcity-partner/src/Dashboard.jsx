@@ -460,11 +460,21 @@ const Dashboard = () => {
 
               {expandedSections.description && (
                 <div className="animate-fade" style={{ marginTop: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{t.descTitle}</label>
+                    <span style={{ fontSize: 10, fontWeight: 800, color: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '#ff4444' : 'var(--text-muted)' }}>
+                      {(selectedPoi[`desc_${activeLang}`]?.length || 0)} / 200
+                    </span>
+                  </div>
                   <textarea 
                     value={selectedPoi[`desc_${activeLang}`] || ''} 
                     onChange={e => handleChange(`desc_${activeLang}`, e.target.value)} 
                     rows={4}
-                    style={{ fontSize: 13, padding: 12 }}
+                    style={{ 
+                      fontSize: 13, 
+                      padding: 12,
+                      border: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '1px solid rgba(255,68,68,0.4)' : ''
+                    }}
                     placeholder={t.placeholderDesc}
                   />
                 </div>
