@@ -461,22 +461,41 @@ const Dashboard = () => {
               {expandedSections.description && (
                 <div className="animate-fade" style={{ marginTop: 16 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{t.descTitle}</label>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '#ff4444' : 'var(--text-muted)' }}>
+                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                      {t.descTitle} ({activeLang.toUpperCase()})
+                    </label>
+                    <span style={{ 
+                      fontSize: 10, 
+                      fontWeight: 800, 
+                      color: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '#FF4444' : 'var(--text-muted)',
+                      background: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? 'rgba(255,68,68,0.1)' : 'transparent',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
                       {(selectedPoi[`desc_${activeLang}`]?.length || 0)} / 200
                     </span>
                   </div>
                   <textarea 
                     value={selectedPoi[`desc_${activeLang}`] || ''} 
                     onChange={e => handleChange(`desc_${activeLang}`, e.target.value)} 
-                    rows={4}
+                    rows={6}
                     style={{ 
                       fontSize: 13, 
-                      padding: 12,
-                      border: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '1px solid rgba(255,68,68,0.4)' : ''
+                      padding: 14,
+                      lineHeight: '1.6',
+                      border: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '2px solid #FF4444' : '1px solid rgba(255,255,255,0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      transition: 'all 0.2s',
+                      width: '100%',
+                      borderRadius: '8px'
                     }}
                     placeholder={t.placeholderDesc}
                   />
+                  {(selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 && (
+                    <div style={{ color: '#FF4444', fontSize: 10, fontWeight: 700, marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <AlertCircle size={12} /> {uiLang === 'ru' ? 'Описание слишком длинное (макс. 200)' : 'Description too long (max 200)'}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
