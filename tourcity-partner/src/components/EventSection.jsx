@@ -19,6 +19,7 @@ const EventSection = ({
   const ext_7 = watch('ext_7') || '';
   const ext_8 = watch('ext_8') || '';
   const ext_9 = watch('ext_9') || '09:00';
+  const ext_11 = watch('ext_11') || '';
 
   const isServiceCategory = ['beauty', 'hair', 'health', 'fitness', 'photo_video', 'legal_visa', 'real_estate', 'home_services', 'tech_repair', 'auto_moto', 'kids', 'education', 'events', 'flowers', 'pets', 'delivery', 'tattoo', 'astrology', 'service', 'transport'].includes(category);
 
@@ -130,11 +131,17 @@ const EventSection = ({
             </div>
 
             <div>
-              <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>
-                {t.eventConditions}
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
+                  {t.eventConditions}
+                </label>
+                <span style={{ fontSize: 10, fontWeight: 800, color: ext_11.length >= 60 ? '#4ADE80' : 'var(--text-muted)' }}>
+                  {ext_11.length} / 60
+                </span>
+              </div>
               <input 
                 style={{ padding: 8, fontSize: 13 }} 
+                maxLength={60}
                 {...register('ext_11')}
                 placeholder={uiLang === 'ru' ? 'Свободный вход / предварительная запись' : 'Free entry / reservation required'} 
               />
