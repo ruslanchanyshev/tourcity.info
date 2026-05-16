@@ -204,9 +204,16 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const res = await api.get('/pois');
-        setPois(res.data);
-        if (res.data.length === 1) {
-          setSelectedPoi(res.data[0]);
+        const pois = res.data.pois || res.data;
+        const mode = res.data.mode;
+
+        if (mode) {
+          localStorage.setItem('partner_mode', mode);
+        }
+
+        setPois(pois);
+        if (pois.length === 1) {
+          setSelectedPoi(pois[0]);
         }
       } catch (err) {
         navigate('/login');
