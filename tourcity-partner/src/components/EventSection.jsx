@@ -63,11 +63,17 @@ const EventSection = ({
         <div className="animate-fade" style={{ marginTop: 16 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', overflow: 'hidden' }}>
             <div>
-              <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>
-                {t.eventName}
-              </label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)' }}>
+                  {t.eventName}
+                </label>
+                <span style={{ fontSize: 10, fontWeight: 800, color: ext_7.length >= 20 ? '#4ADE80' : 'var(--text-muted)' }}>
+                  {ext_7.length} / 20
+                </span>
+              </div>
               <input 
                 style={{ padding: 8, fontSize: 13 }} 
+                maxLength={20}
                 {...register('ext_7')}
                 placeholder={uiLang === 'ru' ? 'Например: Открытие сезона' : 'E.g. Season Opening'} 
               />
