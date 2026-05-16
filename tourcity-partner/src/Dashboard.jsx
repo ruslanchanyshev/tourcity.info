@@ -298,6 +298,23 @@ const Dashboard = () => {
       <main className="main">
         {!selectedPoi ? (
           <div className="poi-list animate-fade">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0, color: 'var(--accent-gold)' }}>
+              {t.dashboardTitle}
+            </h1>
+            <span style={{ 
+              fontSize: 10, 
+              textTransform: 'uppercase', 
+              letterSpacing: 1, 
+              background: 'rgba(255,255,255,0.05)', 
+              padding: '4px 8px', 
+              borderRadius: 6, 
+              color: 'var(--text-muted)',
+              border: '1px solid rgba(255,255,255,0.1)'
+            }}>
+              {localStorage.getItem('partner_mode') === 'services' ? (uiLang === 'ru' ? 'Режим: Услуги' : 'Mode: Services') : (uiLang === 'ru' ? 'Режим: Места' : 'Mode: Places')}
+            </span>
+          </div>
             <h2 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, paddingLeft: 8 }}>
               {t.selectPoi}
             </h2>
