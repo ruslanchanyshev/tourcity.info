@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import api from './api';
 import translations from './translations';
-import { getDiscountCodes } from './discountCodes';
 import logo from './assets/logo.png';
 import { 
   LogOut, 
@@ -10,17 +10,20 @@ import {
   MapPin, 
   Phone, 
   Globe, 
-  Clock, 
   Award, 
-  Save, 
   ChevronRight,
   Gift,
-  AlertCircle,
   Calendar,
   ShoppingBag,
   Coffee,
   ArrowLeft
 } from 'lucide-react';
+
+import AdminNotification from './components/AdminNotification';
+import ContactSection from './components/ContactSection';
+import DescriptionEditor from './components/DescriptionEditor';
+import EventSection from './components/EventSection';
+import DiscountSection from './components/DiscountSection';
 
 const getPoiIcon = (category) => {
   const cat = (category || '').toLowerCase();
@@ -41,143 +44,6 @@ const LANGUAGES = [
   { code: 'es', label: 'Español', flag: '🇪🇸' }
 ];
 
-
-// Premium Time Input - trigger native system picker (scroll wheel on mobile)
-function TimeInput({ value, onChange, label }) {
-  const inputRef = useRef(null);
-  
-  const openPicker = () => {
-    if (inputRef.current) {
-      try { inputRef.current.showPicker(); } catch { inputRef.current.click(); }
-    }
-  };
-
-  return (
-    <div style={{ position: 'relative', flex: 1 }} onClick={openPicker}>
-      <div style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: '10px',
-        padding: '8px 12px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        height: '40px',
-        transition: 'all 0.2s',
-      }}>
-        <span style={{ fontSize: 14, fontWeight: 800, color: value ? '#FFF' : 'rgba(255,255,255,0.3)' }}>
-          {value || '--:--'}
-        </span>
-      </div>
-      <input
-        ref={inputRef}
-        type="time"
-        value={value || ''}
-        onChange={e => onChange(e.target.value)}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0,
-          width: '100%',
-          height: '100%',
-          cursor: 'pointer'
-        }}
-      />
-    </div>
-  );
-}
-
-const MONTHS_LONG_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-const MONTHS_LONG_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function DateInput({ value, onChange, lang = 'ru', placeholder }) {
-  const inputRef = useRef(null);
-
-  // Format display text from DD.MM.YYYY
-  let displayText = '';
-  if (value && value.includes('.')) {
-    const [d, m, y] = value.split('.');
-    const mIdx = parseInt(m, 10) - 1;
-    const months = lang === 'ru' ? MONTHS_LONG_RU : MONTHS_LONG_EN;
-    displayText = `${parseInt(d, 10)} ${months[mIdx] || ''} ${y}`;
-  }
-
-  // Convert DD.MM.YYYY → YYYY-MM-DD for native input value
-  const toNative = (v) => {
-    if (!v || !v.includes('.')) return '';
-    const [d, m, y] = v.split('.');
-    return `${y}-${m}-${d}`;
-  };
-
-  // Convert YYYY-MM-DD → DD.MM.YYYY for storage
-  const fromNative = (v) => {
-    if (!v) return '';
-    const [y, m, d] = v.split('-');
-    return `${d}.${m}.${y}`;
-  };
-
-  const open = () => {
-    if (inputRef.current) {
-      try { inputRef.current.showPicker(); } catch { inputRef.current.click(); }
-    }
-  };
-
-  return (
-    <div style={{ position: 'relative', width: '100%' }} onClick={open}>
-      {/* Styled display — always fits in container */}
-      <div style={{
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 12,
-        padding: '10px 40px 10px 14px',
-        fontSize: 13,
-        fontWeight: 700,
-        color: displayText ? '#FFF' : 'rgba(255,255,255,0.35)',
-        cursor: 'pointer',
-        userSelect: 'none',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        minHeight: 42,
-        display: 'flex',
-        alignItems: 'center',
-      }}>
-        {displayText || (placeholder || (lang === 'ru' ? 'Выбрать дату' : 'Pick a date'))}
-      </div>
-
-      {/* Calendar icon */}
-      <span style={{
-        position: 'absolute',
-        right: 12,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        fontSize: 16,
-        pointerEvents: 'none',
-        opacity: 0.7,
-      }}>📅</span>
-
-      {/* Hidden native input — provides the system date picker */}
-      <input
-        ref={inputRef}
-        type="date"
-        value={toNative(value)}
-        onChange={e => onChange(fromNative(e.target.value))}
-        style={{
-          position: 'absolute',
-          inset: 0,
-          width: '100%',
-          height: '100%',
-          opacity: 0,
-          cursor: 'pointer',
-          zIndex: 1,
-        }}
-      />
-    </div>
-  );
-}
-
-
 const Dashboard = () => {
   const [pois, setPois] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
@@ -196,6 +62,8 @@ const Dashboard = () => {
 
   const t = translations[uiLang] || translations.ru;
 
+  const { register, control, handleSubmit, reset, watch, setValue } = useForm();
+
   useEffect(() => {
     localStorage.setItem('partner_lang', uiLang);
   }, [uiLang]);
@@ -204,7 +72,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const res = await api.get('/pois');
-        const pois = res.data.pois || res.data;
+        const poisData = res.data.pois || res.data;
         const mode = res.data.mode;
         console.log('[DEBUG] Partner Mode detected:', mode);
 
@@ -212,9 +80,10 @@ const Dashboard = () => {
           localStorage.setItem('partner_mode', mode);
         }
 
-        setPois(pois);
-        if (pois.length === 1) {
-          setSelectedPoi(pois[0]);
+        setPois(poisData);
+        if (poisData.length === 1) {
+          setSelectedPoi(poisData[0]);
+          reset(poisData[0]);
         }
       } catch (err) {
         navigate('/login');
@@ -223,12 +92,21 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, [navigate]);
+  }, [navigate, reset]);
 
-  const handleSave = async () => {
+  const handleSelectPoi = (poi) => {
+    setSelectedPoi(poi);
+    reset(poi);
+  };
+
+  const handleBackToList = () => {
+    setSelectedPoi(null);
+  };
+
+  const onSubmit = async (data) => {
     setSaving(true);
     try {
-      await api.patch(`/pois/${selectedPoi.id}`, selectedPoi);
+      await api.patch(`/pois/${selectedPoi.id}`, data);
       alert(t.saveSuccess);
     } catch (err) {
       alert(uiLang === 'ru' ? 'Ошибка сохранения' : 'Save error');
@@ -237,16 +115,16 @@ const Dashboard = () => {
     }
   };
 
-  const handleChange = (field, value) => {
-    setSelectedPoi(prev => ({ ...prev, [field]: value }));
-  };
-
   const handleDeleteEvent = async () => {
     if (!window.confirm(uiLang === 'ru' ? 'Отменить событие? Оно сразу исчезнет из приложения.' : 'Cancel event? It will immediately disappear from the app.')) return;
     setDeletingEvent(true);
     try {
       await api.delete(`/pois/${selectedPoi.id}/event`);
-      setSelectedPoi(prev => ({ ...prev, ext_7: '', ext_8: '', ext_9: '', ext_10: '', ext_11: '' }));
+      setValue('ext_7', '', { shouldDirty: true });
+      setValue('ext_8', '', { shouldDirty: true });
+      setValue('ext_9', '09:00', { shouldDirty: true });
+      setValue('ext_10', '', { shouldDirty: true });
+      setValue('ext_11', '', { shouldDirty: true });
       setExpandedSections(prev => ({ ...prev, event: false }));
       alert(uiLang === 'ru' ? 'Событие удалено' : 'Event deleted');
     } catch (err) {
@@ -261,11 +139,15 @@ const Dashboard = () => {
     navigate('/');
   };
 
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   if (loading) return <div className="loading">...</div>;
 
   return (
     <div className="app-container">
-      {/* Top Header: single row, logo+title left, lang+logout right */}
+      {/* Top Header */}
       <div className="top-header">
         <div className="top-header-left">
           <img src={logo} alt="TourCity Logo" className="header-logo" />
@@ -304,30 +186,33 @@ const Dashboard = () => {
       )}
 
       <main className="main">
+        {/* Admin Notification Panel - displayed above list or editor */}
+        <AdminNotification uiLang={uiLang} />
+
         {!selectedPoi ? (
           <div className="poi-list animate-fade">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0, color: 'var(--accent-gold)' }}>
-              {t.dashboardTitle}
-            </h1>
-            <span style={{ 
-              fontSize: 10, 
-              textTransform: 'uppercase', 
-              letterSpacing: 1, 
-              background: 'rgba(255,255,255,0.05)', 
-              padding: '4px 8px', 
-              borderRadius: 6, 
-              color: 'var(--text-muted)',
-              border: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              {localStorage.getItem('partner_mode') === 'services' ? (uiLang === 'ru' ? 'Режим: Услуги' : 'Mode: Services') : (uiLang === 'ru' ? 'Режим: Места' : 'Mode: Places')}
-            </span>
-          </div>
+              <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0, color: 'var(--accent-gold)' }}>
+                {t.dashboardTitle}
+              </h1>
+              <span style={{ 
+                fontSize: 10, 
+                textTransform: 'uppercase', 
+                letterSpacing: 1, 
+                background: 'rgba(255,255,255,0.05)', 
+                padding: '4px 8px', 
+                borderRadius: 6, 
+                color: 'var(--text-muted)',
+                border: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                {localStorage.getItem('partner_mode') === 'services' ? (uiLang === 'ru' ? 'Режим: Услуги' : 'Mode: Services') : (uiLang === 'ru' ? 'Режим: Места' : 'Mode: Places')}
+              </span>
+            </div>
             <h2 style={{ fontSize: 11, fontWeight: 900, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12, paddingLeft: 8 }}>
               {t.selectPoi}
             </h2>
             {pois.map(poi => (
-              <div key={poi.id} className="poi-card" onClick={() => setSelectedPoi(poi)}>
+              <div key={poi.id} className="poi-card" onClick={() => handleSelectPoi(poi)}>
                 <div className="poi-icon-box">
                   {getPoiIcon(poi.category)}
                 </div>
@@ -344,295 +229,64 @@ const Dashboard = () => {
             ))}
           </div>
         ) : (
-          <div className="editor-layout animate-fade" style={{ gap: 12 }}>
+          <form onSubmit={handleSubmit(onSubmit)} className="editor-layout animate-fade" style={{ gap: 12 }}>
             {pois.length > 1 && (
-              <button onClick={() => setSelectedPoi(null)} className="btn-back">
+              <button type="button" onClick={handleBackToList} className="btn-back">
                 <ArrowLeft size={16} /> {t.backToList}
               </button>
             )}
 
-            {/* Contacts Section (Collapsible) */}
-            <div className={`card ${expandedSections.contacts ? 'expanded' : ''}`} style={{ padding: 16 }}>
-              <div 
-                onClick={() => setExpandedSections(prev => ({ ...prev, contacts: !prev.contacts }))}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
-              >
-                <h2 className="card-title" style={{ marginBottom: 0, fontSize: 13 }}><Phone size={16} color="var(--accent-gold)"/> {t.contactsTitle}</h2>
-                <ChevronRight size={16} color="var(--text-muted)" style={{ transform: expandedSections.contacts ? 'rotate(90deg)' : 'none', transition: 'transform 0.3s' }} />
-              </div>
-              
-              {expandedSections.contacts && (
-                <div className="animate-fade" style={{ marginTop: 16 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>Instagram</label>
-                      <input 
-                        style={{ padding: 8, fontSize: 13 }} 
-                        value={selectedPoi.inst || selectedPoi.website || ''} 
-                        onChange={e => handleChange('inst', e.target.value)} 
-                        placeholder="@..." 
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.telegram}</label>
-                      <input 
-                        style={{ padding: 8, fontSize: 13 }} 
-                        value={selectedPoi.tg || selectedPoi.tg_bot || selectedPoi.telegram || ''} 
-                        onChange={e => {
-                          const val = e.target.value;
-                          setSelectedPoi(prev => ({ ...prev, tg: val }));
-                        }} 
-                        placeholder="username" 
-                      />
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.phone} / WhatsApp</label>
-                      <input 
-                        style={{ padding: 8, fontSize: 13 }} 
-                        value={selectedPoi.wtsp || selectedPoi.phone || ''} 
-                        onChange={e => handleChange('wtsp', e.target.value)} 
-                        placeholder="+84..." 
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.portfolio} / Site</label>
-                      <input 
-                        style={{ padding: 8, fontSize: 13 }} 
-                        value={selectedPoi.site || selectedPoi.ext_1 || ''} 
-                        onChange={e => handleChange('site', e.target.value)} 
-                        placeholder="https://..." 
-                      />
-                    </div>
-                  </div>
+            {/* Contacts Section */}
+            <ContactSection
+              register={register}
+              control={control}
+              setValue={setValue}
+              watch={watch}
+              t={t}
+              uiLang={uiLang}
+              expanded={expandedSections.contacts}
+              onToggle={() => toggleSection('contacts')}
+            />
 
-                  {!['beauty', 'hair', 'health', 'fitness', 'photo_video', 'legal_visa', 'real_estate', 'home_services', 'tech_repair', 'auto_moto', 'kids', 'education', 'events', 'flowers', 'pets', 'delivery', 'tattoo', 'astrology', 'service', 'transport'].includes(selectedPoi.category) && (
-                    <div style={{ marginTop: 12 }}>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.address}</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.address || ''} onChange={e => handleChange('address', e.target.value)} placeholder={t.address} />
-                    </div>
-                  )}
-                  <div style={{ marginTop: 12 }}>
-                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
-                      <span>{t.workingHours}</span>
-                      <span 
-                        onClick={() => handleChange('hours', selectedPoi.hours === '24/7' ? '' : '24/7')}
-                        style={{ color: selectedPoi.hours === '24/7' ? 'var(--accent-gold)' : 'inherit', cursor: 'pointer', opacity: selectedPoi.hours === '24/7' ? 1 : 0.6 }}
-                      >
-                        24/7
-                      </span>
-                    </label>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', opacity: selectedPoi.hours === '24/7' ? 0.5 : 1, pointerEvents: selectedPoi.hours === '24/7' ? 'none' : 'auto', marginTop: 4 }}>
-                      <TimeInput 
-                        value={(selectedPoi.hours || '').split(' - ')[0] || '09:00'} 
-                        onChange={val => {
-                          const parts = (selectedPoi.hours || '09:00 - 22:00').split(' - ');
-                          const end = parts[1] || '22:00';
-                          handleChange('hours', `${val} - ${end}`);
-                        }}
-                      />
-                      <span style={{ color: 'var(--text-muted)', fontWeight: 900, fontSize: 12 }}>—</span>
-                      <TimeInput 
-                        value={(selectedPoi.hours || '').split(' - ')[1] || '22:00'} 
-                        onChange={val => {
-                          const parts = (selectedPoi.hours || '09:00 - 22:00').split(' - ');
-                          const start = parts[0] || '09:00';
-                          handleChange('hours', `${start} - ${val}`);
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Description Editor */}
+            <DescriptionEditor
+              register={register}
+              setValue={setValue}
+              watch={watch}
+              t={t}
+              uiLang={uiLang}
+              activeLang={activeLang}
+              expanded={expandedSections.description}
+              onToggle={() => toggleSection('description')}
+            />
 
-            {/* Description Section (Collapsible) */}
-            <div className={`card ${expandedSections.description ? 'expanded' : ''}`} style={{ padding: 16 }}>
-              <div 
-                onClick={() => setExpandedSections(prev => ({ ...prev, description: !prev.description }))}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
-              >
-                <h2 className="card-title" style={{ marginBottom: 0, fontSize: 13 }}><Store size={16} color="var(--accent-gold)"/> {t.descTitle}</h2>
-                <ChevronRight size={16} color="var(--text-muted)" style={{ transform: expandedSections.description ? 'rotate(90deg)' : 'none', transition: 'transform 0.3s' }} />
-              </div>
+            {/* Event Section */}
+            <EventSection
+              register={register}
+              control={control}
+              setValue={setValue}
+              watch={watch}
+              t={t}
+              uiLang={uiLang}
+              expanded={expandedSections.event}
+              onToggle={() => toggleSection('event')}
+              onDeleteEvent={handleDeleteEvent}
+              deletingEvent={deletingEvent}
+            />
 
-              {expandedSections.description && (
-                <div className="animate-fade" style={{ marginTop: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                      {t.descTitle} ({activeLang.toUpperCase()})
-                    </label>
-                    <span style={{ 
-                      fontSize: 10, 
-                      fontWeight: 800, 
-                      color: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '#FF4444' : 'var(--text-muted)',
-                      background: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? 'rgba(255,68,68,0.1)' : 'transparent',
-                      padding: '2px 6px',
-                      borderRadius: '4px'
-                    }}>
-                      {(selectedPoi[`desc_${activeLang}`]?.length || 0)} / 200
-                    </span>
-                  </div>
-                  <textarea 
-                    value={selectedPoi[`desc_${activeLang}`] || ''} 
-                    onChange={e => handleChange(`desc_${activeLang}`, e.target.value)} 
-                    rows={6}
-                    style={{ 
-                      fontSize: 13, 
-                      padding: 14,
-                      lineHeight: '1.6',
-                      border: (selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 ? '2px solid #FF4444' : '1px solid rgba(255,255,255,0.1)',
-                      background: 'rgba(255,255,255,0.03)',
-                      transition: 'all 0.2s',
-                      width: '100%',
-                      borderRadius: '8px'
-                    }}
-                    placeholder={t.placeholderDesc}
-                  />
-                  {(selectedPoi[`desc_${activeLang}`]?.length || 0) > 200 && (
-                    <div style={{ color: '#FF4444', fontSize: 10, fontWeight: 700, marginTop: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <AlertCircle size={12} /> {uiLang === 'ru' ? 'Описание слишком длинное (макс. 200)' : 'Description too long (max 200)'}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* Coupon/Discount Section */}
+            <DiscountSection
+              register={register}
+              control={control}
+              watch={watch}
+              t={t}
+              uiLang={uiLang}
+            />
 
-            {/* Event Section — collapsible, above Coupon */}
-            {['beauty', 'hair', 'health', 'fitness', 'photo_video', 'legal_visa', 'real_estate', 'home_services', 'tech_repair', 'auto_moto', 'kids', 'education', 'events', 'flowers', 'pets', 'delivery', 'tattoo', 'astrology', 'service', 'transport'].includes(selectedPoi.category) && (
-              <div className="card" style={{ border: '1px solid rgba(74,222,128,0.15)', background: 'rgba(74,222,128,0.02)', padding: 16 }}>
-                <div
-                  onClick={() => setExpandedSections(prev => ({ ...prev, event: !prev.event }))}
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
-                >
-                  <h2 className="card-title" style={{ marginBottom: 0, color: '#4ADE80', fontSize: 13 }}>
-                    <Calendar size={16} /> {t.eventTitle}
-                  </h2>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {selectedPoi.ext_7 && (
-                      <span style={{ background: '#4ADE80', color: '#000', fontSize: 9, fontWeight: 900, padding: '2px 8px', borderRadius: 10 }}>
-                        {uiLang === 'ru' ? 'АКТИВНО' : 'ACTIVE'}
-                      </span>
-                    )}
-                    <ChevronRight size={16} color="var(--text-muted)" style={{ transform: expandedSections.event ? 'rotate(90deg)' : 'none', transition: 'transform 0.3s' }} />
-                  </div>
-                </div>
-
-                {expandedSections.event && (
-                  <div className="animate-fade" style={{ marginTop: 16 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%', overflow: 'hidden' }}>
-                      <div>
-                        <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.eventName}</label>
-                        <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.ext_7 || ''} onChange={e => handleChange('ext_7', e.target.value)} placeholder={uiLang === 'ru' ? 'Например: Открытие сезона' : 'E.g. Season Opening'} />
-                      </div>
-
-                      {/* Date — custom picker, works on all screens */}
-                      <div>
-                        <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.eventDate}</label>
-                        <DateInput
-                          value={selectedPoi.ext_8 || ''}
-                          onChange={val => handleChange('ext_8', val)}
-                          lang={uiLang}
-                        />
-                      </div>
-
-                      {/* Time: two selects side-by-side, each exactly 50% */}
-                      <div>
-                        <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.eventTime}</label>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                          <select
-                            value={(selectedPoi.ext_9 || '09:00').split(':')[0]}
-                            onChange={e => { const mins = (selectedPoi.ext_9 || '09:00').split(':')[1] || '00'; handleChange('ext_9', `${e.target.value}:${mins}`); }}
-                            style={{ fontWeight: 700, fontSize: 14, padding: '10px 14px', width: '100%' }}
-                          >
-                            {Array.from({ length: 24 }).map((_, i) => { const h = i.toString().padStart(2, '0'); return <option key={h} value={h}>{h}ч</option>; })}
-                          </select>
-                          <select
-                            value={(selectedPoi.ext_9 || '09:00').split(':')[1] || '00'}
-                            onChange={e => { const hours = (selectedPoi.ext_9 || '09:00').split(':')[0] || '09'; handleChange('ext_9', `${hours}:${e.target.value}`); }}
-                            style={{ fontWeight: 700, fontSize: 14, padding: '10px 14px', width: '100%' }}
-                          >
-                            {['00', '10', '20', '30', '40', '50'].map(m => <option key={m} value={m}>{m}м</option>)}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.eventLocation}</label>
-                        <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.ext_10 || ''} onChange={e => handleChange('ext_10', e.target.value)} placeholder={uiLang === 'ru' ? 'Адрес или название места' : 'Venue address or name'} />
-                      </div>
-
-                      <div>
-                        <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.eventConditions}</label>
-                        <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.ext_11 || ''} onChange={e => handleChange('ext_11', e.target.value)} placeholder={uiLang === 'ru' ? 'Свободный вход / предварительная запись' : 'Free entry / reservation required'} />
-                      </div>
-
-                      {/* Delete event button */}
-                      {selectedPoi.ext_7 && (
-                        <button
-                          onClick={handleDeleteEvent}
-                          disabled={deletingEvent}
-                          style={{
-                            marginTop: 4, padding: '8px 16px', borderRadius: 10, border: '1px solid rgba(255,68,68,0.3)',
-                            background: 'rgba(255,68,68,0.1)', color: '#FF4444', fontSize: 12, fontWeight: 700,
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                            width: '100%', transition: 'all 0.2s'
-                          }}
-                        >
-                          {deletingEvent ? '...' : `🗑 ${uiLang === 'ru' ? 'Отменить событие' : 'Cancel Event'}`}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Coupon Section */}
-            <div className="card" style={{ border: '1px solid rgba(212,161,23,0.2)', background: 'rgba(212,161,23,0.03)', padding: 16 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <h2 className="card-title" style={{ marginBottom: 0, color: 'var(--accent-gold)', fontSize: 13 }}><Gift size={16} /> {t.couponTitle}</h2>
-                {selectedPoi.size_discount && selectedPoi.size_discount !== '0' && (
-                  <span style={{ background: '#22C55E', color: '#FFF', fontSize: 9, fontWeight: 900, padding: '2px 8px', borderRadius: 10 }}>{t.couponActive}</span>
-                )}
-              </div>
-
-              <div className="coupon-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-                <div style={{ minWidth: 0 }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>%</label>
-                  <select value={selectedPoi.size_discount || '0'} onChange={e => handleChange('size_discount', e.target.value)} style={{ fontWeight: 800, fontSize: 14, color: 'var(--accent-gold)', width: '100%', padding: '10px 14px' }}>
-                    <option value="0">{t.couponNone}</option>
-                    {[5, 10, 15, 20, 25, 30, 40, 50].map(v => <option key={v} value={v}>{v}%</option>)}
-                    <option value="Special">Special</option>
-                  </select>
-                </div>
-                <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                  <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.couponExpiry}</label>
-                  <DateInput
-                    value={selectedPoi.exp_discount || ''}
-                    onChange={val => handleChange('exp_discount', val)}
-                    lang={uiLang}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.couponConditions}</label>
-                <select value={selectedPoi.info_discount || ''} onChange={e => handleChange('info_discount', e.target.value)} style={{ fontSize: 13, padding: 8 }}>
-                  <option value="">-- {t.couponConditions} --</option>
-                  {getDiscountCodes(uiLang, localStorage.getItem('partner_mode') || 'places').map(item => <option key={item.code} value={item.code}>{item.text}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <button onClick={handleSave} disabled={saving} className="btn-primary" style={{ padding: 14, fontSize: 14, fontWeight: 900, marginTop: 8 }}>
+            <button type="submit" disabled={saving} className="btn-primary" style={{ padding: 14, fontSize: 14, fontWeight: 900, marginTop: 8 }}>
               {saving ? t.saving : t.saveBtn}
             </button>
-
-
-          </div>
+          </form>
         )}
       </main>
     </div>

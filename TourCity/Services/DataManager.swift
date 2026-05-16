@@ -226,12 +226,20 @@ class DataManager: ObservableObject {
     }
     
     /// Список категорий, которые реально присутствуют в текущих данных (город + услуги)
+    /// Учитываются только точки с валидными координатами и названиями
     var activeCategories: [POICategory] {
         let cityPois = currentCity?.pois ?? []
         let servicePois = services
         
-        // Берем уникальные категории из всех точек города и мастеров
-        let categoriesInUse = Set((cityPois + servicePois).map { $0.category })
+        // Фильтруем только реально существующие точки (координаты не 0 и есть название)
+        let allValidPois = (cityPois + servicePois).filter { poi in
+            let hasCoords = poi.latitude != 0 && poi.longitude != 0
+            let hasName = !poi.name.isEmpty
+            return hasCoords && hasName
+        }
+        
+        // Берем уникальные категории из валидных точек
+        let categoriesInUse = Set(allValidPois.map { $0.category })
         
         // Возвращаем их в порядке, определенном в POICategory.allCases, но только те, что используются
         return POICategory.allCases.filter { categoriesInUse.contains($0) }

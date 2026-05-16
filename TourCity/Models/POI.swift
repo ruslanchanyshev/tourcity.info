@@ -173,6 +173,30 @@ struct POI: Identifiable, Codable, Hashable {
     var eventDateObj: Date? {
         guard let dateString = eventDate, !dateString.isEmpty else { return nil }
         
+        // Нормализация: убираем пробелы и переводим в нижний регистр
+        let lowercased = dateString.lowercased().trimmingCharacters(in: .whitespaces)
+        var normalized = lowercased
+        
+        // Преобразуем русские месяцы в числа
+        let months = [
+            "января": "01", "январь": "01", "февраля": "02", "февраль": "02",
+            "марта": "03", "март": "03", "апреля": "04", "апрель": "04",
+            "мая": "05", "май": "05", "июня": "06", "июнь": "06",
+            "июля": "07", "июль": "07", "августа": "08", "август": "08",
+            "сентября": "09", "сентябрь": "09", "октября": "10", "октябрь": "10",
+            "ноября": "11", "ноябрь": "11", "декабря": "12", "декабрь": "12"
+        ]
+        
+        for (monthName, monthNum) in months {
+            if normalized.contains(monthName) {
+                normalized = normalized.replacingOccurrences(of: monthName, with: ".\(monthNum)")
+                break
+            }
+        }
+        
+        // Убираем лишние пробелы (например, "19 .05" -> "19.05")
+        normalized = normalized.replacingOccurrences(of: " ", with: "")
+        
         let formats = [
             "dd.MM.yyyy", "yyyy-MM-dd", "dd/MM/yyyy",
             "dd.MM.yy", "dd.MM", "d.M.yyyy", "d.M.yy"
@@ -181,13 +205,14 @@ struct POI: Identifiable, Codable, Hashable {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         
         // Если в дате нет года (например, "19.05"), добавляем текущий год
-        var finalDateString = dateString
-        let components = dateString.components(separatedBy: CharacterSet(charactersIn: "./-"))
+        var finalDateString = normalized
+        let components = normalized.components(separatedBy: CharacterSet(charactersIn: "./-"))
         if components.count == 2 {
             let year = Calendar.current.component(.year, from: Date())
-            finalDateString = "\(dateString).\(year)"
+            finalDateString = "\(normalized).\(year)"
         }
         
+        // Первая попытка: парсинг нормализованной строки
         for format in formats {
             formatter.dateFormat = format
             if let date = formatter.date(from: finalDateString) {
@@ -195,7 +220,7 @@ struct POI: Identifiable, Codable, Hashable {
             }
         }
         
-        // Вторая попытка с оригинальной строкой
+        // Вторая попытка: парсинг оригинальной строки
         for format in formats {
             formatter.dateFormat = format
             if let date = formatter.date(from: dateString) {
