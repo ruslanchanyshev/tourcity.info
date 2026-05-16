@@ -206,6 +206,7 @@ const Dashboard = () => {
         const res = await api.get('/pois');
         const pois = res.data.pois || res.data;
         const mode = res.data.mode;
+        console.log('[DEBUG] Partner Mode detected:', mode);
 
         if (mode) {
           localStorage.setItem('partner_mode', mode);

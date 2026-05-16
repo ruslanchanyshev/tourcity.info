@@ -109,7 +109,11 @@ router.get('/pois', verifyToken, async (req, res) => {
       }
     }
 
-    res.json({ pois: targetPois, mode: req.partner.mode });
+    // Force detect actual mode based on the spreadsheet ID being used
+    const servicesSid = googleSheetsService.getSpreadsheetId('services');
+    const actualMode = (sid === servicesSid) ? 'services' : 'places';
+
+    res.json({ pois: targetPois, mode: actualMode });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
