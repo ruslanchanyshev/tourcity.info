@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
 import translations from './translations';
@@ -42,12 +42,55 @@ const LANGUAGES = [
 ];
 
 
-import { useRef } from 'react';
+// Premium Time Input - trigger native system picker (scroll wheel on mobile)
+function TimeInput({ value, onChange, label }) {
+  const inputRef = useRef(null);
+  
+  const openPicker = () => {
+    if (inputRef.current) {
+      try { inputRef.current.showPicker(); } catch { inputRef.current.click(); }
+    }
+  };
+
+  return (
+    <div style={{ position: 'relative', flex: 1 }} onClick={openPicker}>
+      <div style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '10px',
+        padding: '8px 12px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        height: '40px',
+        transition: 'all 0.2s',
+      }}>
+        <span style={{ fontSize: 14, fontWeight: 800, color: value ? '#FFF' : 'rgba(255,255,255,0.3)' }}>
+          {value || '--:--'}
+        </span>
+      </div>
+      <input
+        ref={inputRef}
+        type="time"
+        value={value || ''}
+        onChange={e => onChange(e.target.value)}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0,
+          width: '100%',
+          height: '100%',
+          cursor: 'pointer'
+        }}
+      />
+    </div>
+  );
+}
 
 const MONTHS_LONG_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const MONTHS_LONG_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// Native date picker with controlled styled display — no overflow on any screen
 function DateInput({ value, onChange, lang = 'ru', placeholder }) {
   const inputRef = useRef(null);
 
@@ -298,22 +341,45 @@ const Dashboard = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
                       <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>Instagram</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.website || ''} onChange={e => handleChange('website', e.target.value)} placeholder="@..." />
+                      <input 
+                        style={{ padding: 8, fontSize: 13 }} 
+                        value={selectedPoi.inst || selectedPoi.website || ''} 
+                        onChange={e => handleChange('inst', e.target.value)} 
+                        placeholder="@..." 
+                      />
                     </div>
                     <div>
                       <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.telegram}</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.tg_bot || ''} onChange={e => handleChange('tg_bot', e.target.value)} placeholder="username" />
+                      <input 
+                        style={{ padding: 8, fontSize: 13 }} 
+                        value={selectedPoi.tg || selectedPoi.tg_bot || selectedPoi.telegram || ''} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          setSelectedPoi(prev => ({ ...prev, tg: val }));
+                        }} 
+                        placeholder="username" 
+                      />
                     </div>
                   </div>
                   
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
                     <div>
                       <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.phone} / WhatsApp</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.phone || ''} onChange={e => handleChange('phone', e.target.value)} placeholder="+84..." />
+                      <input 
+                        style={{ padding: 8, fontSize: 13 }} 
+                        value={selectedPoi.wtsp || selectedPoi.phone || ''} 
+                        onChange={e => handleChange('wtsp', e.target.value)} 
+                        placeholder="+84..." 
+                      />
                     </div>
                     <div>
-                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.portfolio}</label>
-                      <input style={{ padding: 8, fontSize: 13 }} value={selectedPoi.ext_1 || ''} onChange={e => handleChange('ext_1', e.target.value)} placeholder="https://..." />
+                      <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.portfolio} / Site</label>
+                      <input 
+                        style={{ padding: 8, fontSize: 13 }} 
+                        value={selectedPoi.site || selectedPoi.ext_1 || ''} 
+                        onChange={e => handleChange('site', e.target.value)} 
+                        placeholder="https://..." 
+                      />
                     </div>
                   </div>
 
@@ -333,26 +399,23 @@ const Dashboard = () => {
                         24/7
                       </span>
                     </label>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', opacity: selectedPoi.hours === '24/7' ? 0.5 : 1, pointerEvents: selectedPoi.hours === '24/7' ? 'none' : 'auto' }}>
-                      <input 
-                        type="time"
-                        style={{ padding: 8, fontSize: 13, flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', border: 'none', borderRadius: 8, outline: 'none' }} 
-                        value={selectedPoi.hours === '24/7' ? '' : (selectedPoi.hours || '').split(' - ')[0] || ''} 
-                        onChange={e => {
-                          const parts = (selectedPoi.hours || '').split(' - ');
-                          const end = parts.length > 1 ? parts[1] : '';
-                          handleChange('hours', `${e.target.value}${end ? ' - ' + end : ' - '}`);
-                        }} 
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center', opacity: selectedPoi.hours === '24/7' ? 0.5 : 1, pointerEvents: selectedPoi.hours === '24/7' ? 'none' : 'auto', marginTop: 4 }}>
+                      <TimeInput 
+                        value={(selectedPoi.hours || '').split(' - ')[0] || '09:00'} 
+                        onChange={val => {
+                          const parts = (selectedPoi.hours || '09:00 - 22:00').split(' - ');
+                          const end = parts[1] || '22:00';
+                          handleChange('hours', `${val} - ${end}`);
+                        }}
                       />
-                      <span style={{ color: 'var(--text-muted)' }}>—</span>
-                      <input 
-                        type="time"
-                        style={{ padding: 8, fontSize: 13, flex: 1, backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', border: 'none', borderRadius: 8, outline: 'none' }} 
-                        value={selectedPoi.hours === '24/7' ? '' : (selectedPoi.hours || '').split(' - ')[1] || ''} 
-                        onChange={e => {
-                          const start = (selectedPoi.hours || '').split(' - ')[0] || '';
-                          handleChange('hours', `${start} - ${e.target.value}`);
-                        }} 
+                      <span style={{ color: 'var(--text-muted)', fontWeight: 900, fontSize: 12 }}>—</span>
+                      <TimeInput 
+                        value={(selectedPoi.hours || '').split(' - ')[1] || '22:00'} 
+                        onChange={val => {
+                          const parts = (selectedPoi.hours || '09:00 - 22:00').split(' - ');
+                          const start = parts[0] || '09:00';
+                          handleChange('hours', `${start} - ${val}`);
+                        }}
                       />
                     </div>
                   </div>
@@ -477,7 +540,7 @@ const Dashboard = () => {
             <div className="card" style={{ border: '1px solid rgba(212,161,23,0.2)', background: 'rgba(212,161,23,0.03)', padding: 16 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <h2 className="card-title" style={{ marginBottom: 0, color: 'var(--accent-gold)', fontSize: 13 }}><Gift size={16} /> {t.couponTitle}</h2>
-                {selectedPoi.ext_2 && selectedPoi.ext_2 !== '0' && (
+                {selectedPoi.size_discount && selectedPoi.size_discount !== '0' && (
                   <span style={{ background: '#22C55E', color: '#FFF', fontSize: 9, fontWeight: 900, padding: '2px 8px', borderRadius: 10 }}>{t.couponActive}</span>
                 )}
               </div>
@@ -485,7 +548,7 @@ const Dashboard = () => {
               <div className="coupon-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                 <div style={{ minWidth: 0 }}>
                   <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>%</label>
-                  <select value={selectedPoi.ext_2 || '0'} onChange={e => handleChange('ext_2', e.target.value)} style={{ fontWeight: 800, fontSize: 14, color: 'var(--accent-gold)', width: '100%', padding: '10px 14px' }}>
+                  <select value={selectedPoi.size_discount || '0'} onChange={e => handleChange('size_discount', e.target.value)} style={{ fontWeight: 800, fontSize: 14, color: 'var(--accent-gold)', width: '100%', padding: '10px 14px' }}>
                     <option value="0">{t.couponNone}</option>
                     {[5, 10, 15, 20, 25, 30, 40, 50].map(v => <option key={v} value={v}>{v}%</option>)}
                     <option value="Special">Special</option>
@@ -494,8 +557,8 @@ const Dashboard = () => {
                 <div style={{ minWidth: 0, overflow: 'hidden' }}>
                   <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.couponExpiry}</label>
                   <DateInput
-                    value={selectedPoi.ext_3 || ''}
-                    onChange={val => handleChange('ext_3', val)}
+                    value={selectedPoi.exp_discount || ''}
+                    onChange={val => handleChange('exp_discount', val)}
                     lang={uiLang}
                   />
                 </div>
@@ -503,9 +566,9 @@ const Dashboard = () => {
 
               <div>
                 <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>{t.couponConditions}</label>
-                <select value={selectedPoi.ext_4 || ''} onChange={e => handleChange('ext_4', e.target.value)} style={{ fontSize: 13, padding: 8 }}>
+                <select value={selectedPoi.info_discount || ''} onChange={e => handleChange('info_discount', e.target.value)} style={{ fontSize: 13, padding: 8 }}>
                   <option value="">-- {t.couponConditions} --</option>
-                  {getDiscountCodes(uiLang).map(item => <option key={item.code} value={item.code}>{item.text}</option>)}
+                  {getDiscountCodes(uiLang, localStorage.getItem('partner_mode') || 'places').map(item => <option key={item.code} value={item.code}>{item.text}</option>)}
                 </select>
               </div>
             </div>

@@ -27,6 +27,7 @@ function Login() {
     try {
       const res = await api.post('/login', { username, password });
       localStorage.setItem('partner_token', res.data.token);
+      localStorage.setItem('partner_mode', res.data.mode || 'places');
       if (res.data.expirationDate) {
         localStorage.setItem('partner_expiration', res.data.expirationDate);
       } else {

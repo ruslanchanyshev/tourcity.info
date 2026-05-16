@@ -52,8 +52,25 @@ const DISCOUNT_CODES_I18N = {
   '50':  { ru: 'Повторный визит', en: 'Return visit', vi: 'Lần ghé thăm tiếp theo', ko: '재방문 시', zh: '再次光临', fr: 'Visite de retour', es: 'Visita de regreso' },
 };
 
-export function getDiscountCodes(lang = 'ru') {
-  return Object.entries(DISCOUNT_CODES_I18N).map(([code, texts]) => ({
+const SERVICE_DISCOUNT_CODES_I18N = {
+  '200': { ru: 'Скидка на первое посещение', en: 'First visit discount', vi: 'Giảm giá lần đầu', ko: '첫 방문 할인', zh: '首次访问折扣', fr: 'Remise première visite', es: 'Descuento primera visita' },
+  '201': { ru: 'Первый урок бесплатно', en: 'First lesson for free', vi: 'Bài học đầu tiên miễn phí', ko: '첫 수업 무료', zh: '首课免费', fr: 'Premier cours gratuit', es: 'Primera clase gratis' },
+  '202': { ru: 'Скидка на групповые занятия', en: 'Group class discount', vi: 'Giảm giá nhóm', ko: '그룹 수업 할인', zh: '团体课折扣', fr: 'Remise cours collectif', es: 'Descuento clases grupales' },
+  '203': { ru: 'Бесплатная доставка', en: 'Free delivery', vi: 'Giao hàng miễn phí', ko: '무료 배송', zh: '免费送货', fr: 'Livraison gratuite', es: 'Envío gratis' },
+  '204': { ru: 'Приведи друга (скидка обоим)', en: 'Bring a friend (both get discount)', vi: 'Mời bạn bè (cả hai đều được giảm)', ko: '친구 초대 (둘 다 할인)', zh: '推荐朋友（双方均享折扣）', fr: 'Parrainez un ami (remise pour les deux)', es: 'Trae un amigo (descuento para ambos)' },
+  '205': { ru: 'Раннее бронирование', en: 'Early booking', vi: 'Đặt trước sớm', ko: '조기 예약 할인', zh: '早鸟预订', fr: 'Réservation anticipée', es: 'Reserva anticipada' },
+  '206': { ru: 'Скидка за отзыв с фото', en: 'Discount for review with photo', vi: 'Giảm giá khi để lại nhận xét kèm ảnh', ko: '포토 리뷰 할인', zh: '带图好评折扣', fr: 'Remise pour avis avec photo', es: 'Descuento por reseña con foto' },
+  '211': { ru: 'Скидка за отметку в сторис', en: 'Discount for story tag', vi: 'Giảm giá khi tag story', ko: '스토리 태그 할인', zh: '标记故事折扣', fr: 'Remise pour tag en story', es: 'Descuento por etiqueta en story' },
+  '212': { ru: 'Консультация / диагностика бесплатно', en: 'Free consultation / diagnosis', vi: 'Tư vấn / chẩn đoán miễn phí', ko: '무료 상담 / 진단', zh: '免费咨询 / 诊断', fr: 'Consultation / diagnostic gratuit', es: 'Consulta / diagnóstico gratis' },
+  '213': { ru: 'Счастливые часы в будни', en: 'Happy hours on weekdays', vi: 'Giờ vàng ngày thường', ko: '평일 해пи아워', zh: '工作日欢乐时光', fr: 'Happy hours en semaine', es: 'Happy hours en semana' },
+  '207': { ru: 'Подарок к заказу', en: 'Gift with order', vi: 'Quà tặng kèm theo', ko: '주문 시 선물 증정', zh: '下单赠礼', fr: 'Cadeau avec commande', es: 'Regalo con pedido' },
+  '208': { ru: 'Пакет услуг (от 3-х)', en: 'Service package (3+)', vi: 'Gói dịch vụ (từ 3 gói)', ko: '서비스 패키지 (3개 이상)', zh: '服务套餐（3个起）', fr: 'Forfait services (3+)', es: 'Paquete de servicios (3+)' },
+  '210': { ru: 'Специальное предложение', en: 'Special offer', vi: 'Ưu đãi đặc biệt', ko: '특별 제공', zh: '特别优惠', fr: 'Offre spéciale', es: 'Oferta especial' },
+};
+
+export function getDiscountCodes(lang = 'ru', mode = 'places') {
+  const codes = mode === 'services' ? SERVICE_DISCOUNT_CODES_I18N : DISCOUNT_CODES_I18N;
+  return Object.entries(codes).map(([code, texts]) => ({
     code,
     text: texts[lang] || texts['ru'],
   }));
