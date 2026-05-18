@@ -44,7 +44,9 @@ const translations = {
     couponWarningTitle: 'Замена купона',
     couponWarningDesc: 'У вас уже есть активная акция. Вы уверены, что хотите создать новую? Это приведет к удалению старой.',
     cancel: 'Отмена',
-    confirm: 'Да, заменить'
+    confirm: 'Да, заменить',
+    availableTitle: 'Доступность в приложении',
+    availableLabel: 'Заведение отображается и доступно пользователям в путеводителе'
   },
   en: {
     title: 'Partnership',
@@ -91,7 +93,9 @@ const translations = {
     couponWarningTitle: 'Replace Coupon',
     couponWarningDesc: 'You already have an active promotion. Are you sure you want to create a new one? The old one will be removed.',
     cancel: 'Cancel',
-    confirm: 'Yes, replace'
+    confirm: 'Yes, replace',
+    availableTitle: 'Visibility in App',
+    availableLabel: 'Venue is visible and available to users in the guide'
   },
   vi: {
     title: 'Partnership',
@@ -131,7 +135,9 @@ const translations = {
     couponWarningTitle: 'Thay thế mã giảm giá',
     couponWarningDesc: 'Bạn đã có một chương trình khuyến mãi đang hoạt động. Bạn có chắc muốn tạo mới? Chương trình cũ будет удалена.',
     cancel: 'Hủy',
-    confirm: 'Có, thay thế'
+    confirm: 'Có, thay thế',
+    availableTitle: 'Hiển thị trong ứng dụng',
+    availableLabel: 'Địa điểm được hiển thị và khả dụng cho người dùng trong hướng dẫn'
   },
   zh: {
     title: 'Partnership',
@@ -169,7 +175,9 @@ const translations = {
     couponWarningTitle: '更换优惠券',
     couponWarningDesc: '您已经有一个激活的促销活动。您确定要创建新活动吗？旧活动将被删除。',
     cancel: '取消',
-    confirm: '是的，更换'
+    confirm: '是的，更换',
+    availableTitle: '应用内显示状态',
+    availableLabel: '场所在指南中对用户可见且可用'
   },
   ko: {
     title: 'Partnership',
@@ -207,7 +215,9 @@ const translations = {
     couponWarningTitle: '쿠폰 교체',
     couponWarningDesc: '이미 활성 프로모션이 있습니다. 새 프로모션을 만드시겠습니까? 기존 프로모션은 삭제됩니다.',
     cancel: '취소',
-    confirm: '예, 교체'
+    confirm: '예, 교체',
+    availableTitle: '앱 표시 상태',
+    availableLabel: '가이드에서 사용자에게 장소가 표시되고 사용 가능한 상태입니다'
   },
   fr: {
     title: 'Partnership',
@@ -245,7 +255,9 @@ const translations = {
     couponWarningTitle: 'Remplacer le coupon',
     couponWarningDesc: 'Vous avez déjà une promotion active. Voulez-vous vraiment en créer une nouvelle ? L\'ancienne sera supprimée.',
     cancel: 'Annuler',
-    confirm: 'Oui, remplacer'
+    confirm: 'Oui, remplacer',
+    availableTitle: 'Visibilité dans l\'application',
+    availableLabel: 'L\'établissement est visible et disponible pour les utilisateurs'
   },
   es: {
     title: 'Partnership',
@@ -283,8 +295,10 @@ const translations = {
     couponWarningTitle: 'Reemplazar cupón',
     couponWarningDesc: 'Ya tienes una promoción activa. ¿Estás seguro de que quieres crear una nueva? La anterior se eliminará.',
     cancel: 'Cancelar',
-    confirm: 'Sí, reemplazar'
-  }
+    confirm: 'Sí, reemplazar',
+    availableTitle: 'Visibilidad en la aplicación',
+    availableLabel: 'El establecimiento está visible y disponible para los usuarios'
+  },
 };
 
 export default translations;

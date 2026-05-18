@@ -236,6 +236,51 @@ const Dashboard = () => {
               </button>
             )}
 
+            {/* Availability Section */}
+            <div style={{
+              padding: '16px 20px',
+              borderRadius: '24px',
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
+                <span style={{ fontSize: '14px', fontWeight: 900, color: 'var(--text-main)' }}>{t.availableTitle}</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t.availableLabel}</span>
+              </div>
+              <label style={{ marginLeft: 'auto', display: 'inline-block', width: '48px', height: '24px', position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                <input 
+                  type="checkbox"
+                  checked={watch('available') !== '0'}
+                  onChange={(e) => setValue('available', e.target.checked ? '1' : '0', { shouldDirty: true })}
+                  style={{ opacity: 0, width: 0, height: 0 }}
+                />
+                <span style={{ 
+                  position: 'absolute', 
+                  top: 0, left: 0, right: 0, bottom: 0, 
+                  backgroundColor: watch('available') !== '0' ? 'var(--accent-gold)' : 'rgba(255,255,255,0.1)', 
+                  transition: '0.3s', 
+                  borderRadius: '34px' 
+                }}>
+                  <span style={{
+                    position: 'absolute',
+                    content: '""',
+                    height: '18px',
+                    width: '18px',
+                    left: '3px',
+                    bottom: '3px',
+                    backgroundColor: '#111',
+                    transition: '0.3s',
+                    borderRadius: '50%',
+                    transform: watch('available') !== '0' ? 'translateX(24px)' : 'translateX(0)'
+                  }} />
+                </span>
+              </label>
+            </div>
+
             {/* Contacts Section */}
             <ContactSection
               register={register}
