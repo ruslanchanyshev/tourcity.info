@@ -12,6 +12,7 @@ const translations = {
     addressNotSpecified: 'Адрес не указан',
     contactsTitle: 'Контакты и Связь',
     phone: 'Телефон',
+    callNumber: 'Номер для звонка',
     address: 'Адрес',
     instagram: 'Instagram',
     telegram: 'Telegram (ник без @)',
@@ -46,7 +47,8 @@ const translations = {
     cancel: 'Отмена',
     confirm: 'Да, заменить',
     availableTitle: 'Доступность в приложении',
-    availableLabel: 'Заведение отображается и доступно пользователям в путеводителе'
+    availableLabel: 'Заведение отображается и доступно пользователям в путеводителе',
+    previewCardBtn: 'Карточка в приложении'
   },
   en: {
     title: 'Partnership',
@@ -61,6 +63,7 @@ const translations = {
     addressNotSpecified: 'Address not specified',
     contactsTitle: 'Contacts & Communication',
     phone: 'Phone',
+    callNumber: 'Call Phone Number',
     address: 'Address',
     instagram: 'Instagram',
     telegram: 'Telegram (username)',
@@ -95,7 +98,8 @@ const translations = {
     cancel: 'Cancel',
     confirm: 'Yes, replace',
     availableTitle: 'Visibility in App',
-    availableLabel: 'Venue is visible and available to users in the guide'
+    availableLabel: 'Venue is visible and available to users in the guide',
+    previewCardBtn: 'App Card Preview'
   },
   vi: {
     title: 'Partnership',
@@ -110,6 +114,7 @@ const translations = {
     addressNotSpecified: 'Địa chỉ chưa được chỉ định',
     contactsTitle: 'Liên hệ & Thông tin',
     phone: 'Số điện thoại',
+    callNumber: 'Số điện thoại gọi',
     address: 'Địa chỉ',
     instagram: 'Instagram',
     telegram: 'Telegram',
@@ -152,6 +157,7 @@ const translations = {
     addressNotSpecified: '未指定地址',
     contactsTitle: '联系与沟通',
     phone: '电话',
+    callNumber: '通话电话号码',
     address: '地址',
     instagram: 'Instagram',
     workingHours: '营业时间',
@@ -192,6 +198,7 @@ const translations = {
     addressNotSpecified: '주소 미지정',
     contactsTitle: '연락처 및 통신',
     phone: '전화번호',
+    callNumber: '전화 통화 번호',
     address: '주소',
     instagram: 'Instagram',
     workingHours: '영업 시간',
@@ -232,6 +239,7 @@ const translations = {
     addressNotSpecified: 'Adresse non spécifiée',
     contactsTitle: 'Contacts & Communication',
     phone: 'Téléphone',
+    callNumber: 'Numéro de téléphone',
     address: 'Adresse',
     instagram: 'Instagram',
     workingHours: 'Heures d\'ouverture',
@@ -272,6 +280,7 @@ const translations = {
     addressNotSpecified: 'Dirección no especificada',
     contactsTitle: 'Contactos y Comunicación',
     phone: 'Teléfono',
+    callNumber: 'Número de teléfono',
     address: 'Dirección',
     instagram: 'Instagram',
     workingHours: 'Horario de atención',

@@ -82,7 +82,7 @@ const ContactSection = ({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
             <div>
               <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>
-                {t.phone} / WhatsApp
+                WhatsApp
               </label>
               <input 
                 style={{ padding: 8, fontSize: 13 }} 
@@ -92,14 +92,25 @@ const ContactSection = ({
             </div>
             <div>
               <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>
-                {t.portfolio} / Site
+                {t.callNumber}
               </label>
               <input 
                 style={{ padding: 8, fontSize: 13 }} 
-                {...register('site')}
-                placeholder="https://..." 
+                {...register('call')}
+                placeholder="+84..." 
               />
             </div>
+          </div>
+          
+          <div style={{ marginTop: 12 }}>
+            <label style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 4, display: 'block' }}>
+              {t.portfolio}
+            </label>
+            <input 
+              style={{ padding: 8, fontSize: 13 }} 
+              {...register('site')}
+              placeholder="https://..." 
+            />
           </div>
 
           {!isServiceCategory && (

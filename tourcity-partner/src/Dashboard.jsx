@@ -16,7 +16,9 @@ import {
   Calendar,
   ShoppingBag,
   Coffee,
-  ArrowLeft
+  ArrowLeft,
+  Smartphone,
+  Eye
 } from 'lucide-react';
 
 import AdminNotification from './components/AdminNotification';
@@ -24,6 +26,7 @@ import ContactSection from './components/ContactSection';
 import DescriptionEditor from './components/DescriptionEditor';
 import EventSection from './components/EventSection';
 import DiscountSection from './components/DiscountSection';
+import CardPreviewModal from './components/CardPreviewModal';
 
 const getPoiIcon = (category) => {
   const cat = (category || '').toLowerCase();
@@ -58,6 +61,7 @@ const Dashboard = () => {
     coupon: true
   });
   const [deletingEvent, setDeletingEvent] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const navigate = useNavigate();
 
   const t = translations[uiLang] || translations.ru;
@@ -230,11 +234,38 @@ const Dashboard = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="editor-layout animate-fade" style={{ gap: 12 }}>
-            {pois.length > 1 && (
-              <button type="button" onClick={handleBackToList} className="btn-back">
-                <ArrowLeft size={16} /> {t.backToList}
+            {/* Action Bar: Back & Preview Buttons */}
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '4px' }}>
+              {pois.length > 1 && (
+                <button type="button" onClick={handleBackToList} className="btn-back" style={{ flexShrink: 0, margin: 0 }}>
+                  <ArrowLeft size={16} /> {t.backToList}
+                </button>
+              )}
+              <button 
+                type="button" 
+                onClick={() => setIsPreviewOpen(true)}
+                style={{
+                  flex: 1,
+                  padding: '12px 18px',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, rgba(212,161,23,0.18) 0%, rgba(212,161,23,0.06) 100%)',
+                  border: '1px solid rgba(212,161,23,0.4)',
+                  color: 'var(--accent-gold)',
+                  fontSize: '13px',
+                  fontWeight: '900',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 15px rgba(212,161,23,0.15)',
+                  transition: 'all 0.2s ease-out'
+                }}
+              >
+                <Smartphone size={16} />
+                {t.previewCardBtn || 'Карточка в приложении'}
               </button>
-            )}
+            </div>
 
             {/* Availability Section */}
             <div style={{
@@ -334,6 +365,16 @@ const Dashboard = () => {
           </form>
         )}
       </main>
+
+      {/* iOS App Card Live Preview Modal */}
+      {isPreviewOpen && selectedPoi && (
+        <CardPreviewModal
+          poi={selectedPoi}
+          formValues={watch()}
+          uiLang={uiLang}
+          onClose={() => setIsPreviewOpen(false)}
+        />
+      )}
     </div>
   );
 };
