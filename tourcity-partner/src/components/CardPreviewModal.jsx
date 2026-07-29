@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   X, 
   Star, 
@@ -7,11 +7,21 @@ import {
   Map, 
   ChevronRight, 
   MapPin, 
-  Phone
+  Phone,
+  Wifi,
+  BatteryCharging
 } from 'lucide-react';
 
 const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
   if (!poi) return null;
+
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   // Merge original poi data with transient formValues for real-time live preview!
   const currentData = { ...poi, ...formValues };
@@ -28,9 +38,22 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
   const hours = currentData.hours || currentData.opening_hours || '08:00 - 22:00';
   const address = currentData.address || 'Nha Trang, Vietnam';
 
-  // Discount values
-  const sizeDiscount = currentData.size_discount || currentData.ext_2 || '';
-  const infoDiscount = currentData.info_discount || currentData.ext_4 || currentData.ext_6 || '100';
+  // Strict check for active coupon/discount
+  const rawSize = (currentData.size_discount || currentData.ext_2 || '').toString().trim();
+  const rawSizeLower = rawSize.toLowerCase();
+  const rawInfo = (currentData.info_discount || currentData.ext_4 || '').toString().trim();
+  
+  const hasActiveCoupon = Boolean(
+    rawSize && 
+    rawSizeLower !== '0' && 
+    rawSizeLower !== 'none' && 
+    rawSizeLower !== 'no' && 
+    rawSizeLower !== 'нет' && 
+    rawSizeLower !== 'false' &&
+    rawSizeLower !== 'null'
+  );
+
+  const infoDiscount = rawInfo || '100';
 
   // Get image URL
   const images = (currentData.images || '').split(/[,\s\n]+/).filter(Boolean);
@@ -44,9 +67,9 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
 
   // Discount text formatting
   const getDiscountSubtitle = () => {
-    if (sizeDiscount && sizeDiscount !== 'Special') {
-      return `${sizeDiscount}% (${infoDiscount === '100' ? 'На весь чек' : 'Спец. условия'})`;
-    } else if (sizeDiscount === 'Special') {
+    if (rawSize && rawSizeLower !== 'special') {
+      return `${rawSize}% (${infoDiscount === '100' ? 'На весь чек' : 'Спец. условия'})`;
+    } else if (rawSizeLower === 'special') {
       return 'Специальное предложение';
     } else if (infoDiscount) {
       return 'Подарок при посещении';
@@ -55,38 +78,47 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(5, 3, 2, 0.85)',
-      backdropFilter: 'blur(12px)',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      animation: 'fadeIn 0.2s ease-out'
-    }}>
-      {/* Modal Container */}
-      <div style={{
-        position: 'relative',
+    <div 
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.88)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        zIndex: 99999,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        maxHeight: '95vh',
-      }}>
-        {/* Top Control Bar */}
+        justifyContent: 'center',
+        padding: '12px',
+        animation: 'fadeIn 0.2s ease-out'
+      }}
+    >
+      {/* Modal Inner Container - click inside doesn't close */}
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          maxWidth: '100%',
+          maxHeight: '98vh'
+        }}
+      >
+        {/* Top Control Bar with Big Touch-Friendly Close Button */}
         <div style={{
           display: 'flex',
           justify: 'space-between',
           alignItems: 'center',
           width: '100%',
-          maxWidth: '390px',
-          marginBottom: '12px',
-          padding: '0 8px'
+          maxWidth: '380px',
+          marginBottom: '8px',
+          padding: '0 4px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{
@@ -101,78 +133,101 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
             }}>
               iOS Preview
             </span>
-            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.7)' }}>
-              Карточка в приложении
+            <span style={{ fontSize: '12px', fontWeight: '700', color: 'rgba(255,255,255,0.8)' }}>
+              Предпросмотр
             </span>
           </div>
 
+          {/* Prominent Touch Close Button */}
           <button 
+            type="button"
             onClick={onClose}
             style={{
-              background: 'rgba(255,255,255,0.12)',
-              border: '1px solid rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.18)',
+              border: '1px solid rgba(255,255,255,0.25)',
               color: '#FFF',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
+              padding: '6px 14px',
+              borderRadius: '20px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: '6px',
+              fontSize: '12px',
+              fontWeight: '800',
               cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
               transition: 'all 0.2s'
             }}
           >
-            <X size={18} />
+            <X size={16} />
+            Закрыть
           </button>
         </div>
 
         {/* iPhone Device Frame */}
         <div style={{
-          width: '380px',
-          height: '750px',
+          width: 'min(375px, 92vw)',
+          height: 'min(730px, 82vh)',
           backgroundColor: '#16120e',
           borderRadius: '44px',
-          border: '10px solid #2a241e',
-          boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,161,23,0.2)',
+          border: '9px solid #2a241e',
+          boxShadow: '0 25px 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(212,161,23,0.3)',
           overflow: 'hidden',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           userSelect: 'none'
         }}>
-          {/* Dynamic Island / Status Bar */}
+          {/* Authentic iPhone Status Bar & Dynamic Island */}
           <div style={{
-            height: '40px',
+            height: '44px',
             backgroundColor: 'transparent',
             display: 'flex',
             justify: 'space-between',
             alignItems: 'center',
-            padding: '0 24px',
+            padding: '0 22px',
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 10,
+            zIndex: 20,
             color: '#ffffff',
             fontSize: '12px',
             fontWeight: '700',
             pointerEvents: 'none'
           }}>
-            <span>02:40</span>
-            {/* Camera / Notch pill */}
+            <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '-0.02em' }}>02:40</span>
+            
+            {/* Dynamic Island Notch Pill */}
             <div style={{
-              width: '90px',
+              width: '96px',
               height: '24px',
-              backgroundColor: '#000',
+              backgroundColor: '#000000',
               borderRadius: '20px',
               position: 'absolute',
               left: '50%',
               transform: 'translateX(-50%)',
-              top: '6px'
-            }} />
-            <div style={{ display: 'flex', gap: '4px', alignItems: 'center', fontSize: '10px' }}>
-              <span>5G</span>
-              <span>46%</span>
+              top: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingRight: '8px'
+            }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#111726', border: '1px solid #1a2233' }} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px' }}>
+              <Wifi size={12} color="#ffffff" />
+              <div style={{
+                width: '22px',
+                height: '11px',
+                border: '1px solid rgba(255,255,255,0.8)',
+                borderRadius: '3px',
+                padding: '1px',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <div style={{ width: '60%', height: '100%', backgroundColor: '#ffffff', borderRadius: '1px' }} />
+              </div>
             </div>
           </div>
 
@@ -182,8 +237,9 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
             overflowY: 'auto',
             overflowX: 'hidden',
             color: '#ffffff',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-            paddingBottom: '24px'
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif',
+            paddingBottom: '24px',
+            WebkitOverflowScrolling: 'touch'
           }}>
 
             {/* 1. Hero Image Container */}
@@ -209,7 +265,7 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'linear-gradient(to top, rgba(22,18,14,1) 0%, rgba(22,18,14,0.5) 50%, rgba(0,0,0,0.2) 100%)',
+                background: 'linear-gradient(to top, rgba(22,18,14,1) 0%, rgba(22,18,14,0.5) 55%, rgba(0,0,0,0.2) 100%)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-end',
@@ -237,23 +293,30 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                 </h1>
               </div>
 
-              {/* Close Button top right */}
-              <div style={{
-                position: 'absolute',
-                top: '44px',
-                right: '16px',
-                width: '28px',
-                height: '28px',
-                borderRadius: '50%',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                backdropFilter: 'blur(8px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}>
-                <X size={14} />
-              </div>
+              {/* In-Screen Close Button top right */}
+              <button
+                type="button"
+                onClick={onClose}
+                style={{
+                  position: 'absolute',
+                  top: '48px',
+                  right: '16px',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(8px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  zIndex: 25
+                }}
+              >
+                <X size={16} />
+              </button>
             </div>
 
             {/* Content Body */}
@@ -333,8 +396,8 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                 </p>
               </div>
 
-              {/* 5. Coupon Card Banner */}
-              {(sizeDiscount || infoDiscount) && (
+              {/* 5. Coupon Card Banner - ONLY SHOWN IF ACTIVE COUPON EXISTS */}
+              {hasActiveCoupon && (
                 <div style={{
                   background: 'linear-gradient(135deg, #c48214 0%, #a86c0c 100%)',
                   borderRadius: '18px',
@@ -354,7 +417,8 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#ffffff'
+                      color: '#ffffff',
+                      flexShrink: 0
                     }}>
                       <Tag size={20} />
                     </div>
@@ -509,6 +573,28 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
             </div>
           </div>
         </div>
+
+        {/* Bottom Touch-Friendly Close Button for Mobile Screens */}
+        <button 
+          type="button"
+          onClick={onClose}
+          style={{
+            marginTop: '10px',
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            color: '#FFF',
+            padding: '8px 24px',
+            borderRadius: '24px',
+            fontSize: '13px',
+            fontWeight: '800',
+            cursor: 'pointer',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(8px)',
+            transition: 'all 0.2s'
+          }}
+        >
+          ✕ Закрыть просмотр
+        </button>
       </div>
     </div>
   );
