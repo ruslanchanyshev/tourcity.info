@@ -237,15 +237,10 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                 <rect x="12" y="1" width="2.5" height="10" rx="0.6" fill="#FFFFFF" />
               </svg>
 
-              {/* iPhone 3-Wave Wi-Fi Icon (Exactly 3 tiers: Top arc, Middle arc, Dot) */}
-              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* Wave 1: Outer Arc */}
-                <path d="M0.75 2.5C2.6 0.9 4.9 0 7.5 0C10.1 0 12.4 0.9 14.25 2.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                {/* Wave 2: Inner Arc */}
-                <path d="M3.2 5.2C4.4 4.1 5.9 3.5 7.5 3.5C9.1 3.5 10.6 4.1 11.8 5.2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
-                {/* Wave 3: Center Dot */}
-                <circle cx="7.5" cy="9" r="1.3" fill="#FFFFFF" />
-              </svg>
+              {/* 4G Text Indicator */}
+              <span style={{ fontSize: '11px', fontWeight: '800', color: '#FFFFFF', letterSpacing: '0.02em', lineHeight: 1, padding: '0 1px' }}>
+                4G
+              </span>
 
               {/* iPhone Battery Icon */}
               <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1px' }}>
