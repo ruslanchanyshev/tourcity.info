@@ -237,12 +237,14 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
                 <rect x="12" y="1" width="2.5" height="10" rx="0.6" fill="#FFFFFF" />
               </svg>
 
-              {/* iPhone 3-Wave Wi-Fi Icon */}
-              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0.8 3.5C2.8 1.6 5.3 0.6 8 0.6C10.7 0.6 13.2 1.6 15.2 3.5" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
-                <path d="M3.2 6.0C4.5 4.7 6.2 4.0 8.0 4.0C9.8 4.0 11.5 4.7 12.8 6.0" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
-                <path d="M5.5 8.4C6.2 7.7 7.1 7.3 8.0 7.3C8.9 7.3 9.8 7.7 10.5 8.4" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
-                <circle cx="8" cy="10.6" r="1.1" fill="#FFFFFF" />
+              {/* iPhone 3-Wave Wi-Fi Icon (Exactly 3 tiers: Top arc, Middle arc, Dot) */}
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {/* Wave 1: Outer Arc */}
+                <path d="M0.75 2.5C2.6 0.9 4.9 0 7.5 0C10.1 0 12.4 0.9 14.25 2.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                {/* Wave 2: Inner Arc */}
+                <path d="M3.2 5.2C4.4 4.1 5.9 3.5 7.5 3.5C9.1 3.5 10.6 4.1 11.8 5.2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" />
+                {/* Wave 3: Center Dot */}
+                <circle cx="7.5" cy="9" r="1.3" fill="#FFFFFF" />
               </svg>
 
               {/* iPhone Battery Icon */}
