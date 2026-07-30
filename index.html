@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Noto+Sans+SC:wght@500;700;900&family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -22,17 +22,19 @@
             </a>
             
             <div class="nav-right">
-                <!-- Language Picker -->
-                <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
-                    <option value="ru">🇷🇺 RU</option>
-                    <option value="en">🇺🇸 EN</option>
-                    <option value="vi">🇻🇳 VI</option>
-                    <option value="ko">🇰🇷 KO</option>
-                    <option value="zh">🇨🇳 ZH</option>
-                    <option value="fr">🇫🇷 FR</option>
-                    <option value="es">🇪🇸 ES</option>
-                </select>
-                <a href="#support" id="nav-support" style="color: var(--text-dim); text-decoration: none; font-weight: 700;">Support</a>
+                <!-- Custom Styled Language Picker -->
+                <div class="lang-selector-wrapper">
+                    <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
+                        <option value="ru">🇷🇺 RU</option>
+                        <option value="en">🇺🇸 EN</option>
+                        <option value="vi">🇻🇳 VI</option>
+                        <option value="ko">🇰🇷 KO</option>
+                        <option value="zh">🇨🇳 ZH</option>
+                        <option value="fr">🇫🇷 FR</option>
+                        <option value="es">🇪🇸 ES</option>
+                    </select>
+                </div>
+                <a href="#support" id="nav-support" style="color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 0.9rem;">Support</a>
             </div>
         </div>
     </header>
