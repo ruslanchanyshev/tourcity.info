@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TourCity | Your Offline Guide to Nha Trang</title>
+    <title id="doc-title">TourCity | Your Offline Guide to Nha Trang</title>
+    <meta name="description" content="The most detailed offline map of Nha Trang with 3D buildings, curated local guides, and exclusive discounts." />
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -19,43 +20,57 @@
                 <img src="AppLogo.png" alt="TourCity Logo">
                 <span>tourcity.info</span>
             </a>
-            <nav>
-                <a href="#support" style="color: var(--text-dim); text-decoration: none; font-weight: 700;">Support</a>
-            </nav>
+            
+            <div class="nav-right">
+                <!-- Language Picker -->
+                <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
+                    <option value="ru">🇷🇺 RU</option>
+                    <option value="en">🇺🇸 EN</option>
+                    <option value="vi">🇻🇳 VI</option>
+                    <option value="ko">🇰🇷 KO</option>
+                    <option value="zh">🇨🇳 ZH</option>
+                    <option value="fr">🇫🇷 FR</option>
+                    <option value="es">🇪🇸 ES</option>
+                </select>
+                <a href="#support" id="nav-support" style="color: var(--text-dim); text-decoration: none; font-weight: 700;">Support</a>
+            </div>
         </div>
     </header>
 
     <main>
         <section class="hero">
             <div class="container">
-                <h1>Explore Nha Trang<br><span style="color: var(--primary);">Offline & Effortless</span></h1>
-                <p>The most detailed offline map with 3D buildings, curated local guides, and exclusive discounts for your perfect vacation.</p>
-                <a href="https://apps.apple.com/vn/app/tourcity-info/id6762235589" class="btn-primary" target="_blank" rel="noopener noreferrer">Download for iOS</a>
+                <h1 id="hero-title">Explore Nha Trang<br><span style="color: var(--primary);">Offline & Effortless</span></h1>
+                <p id="hero-desc">The most detailed offline map with 3D buildings, curated local guides, and exclusive discounts for your perfect vacation.</p>
+                <a href="https://apps.apple.com/vn/app/tourcity-info/id6762235589" class="btn-primary" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-apple" style="font-size: 1.3rem;"></i>
+                    <span id="download-btn-text">Download for iOS</span>
+                </a>
             </div>
         </section>
 
         <section class="container features">
             <div class="feature-card">
                 <i class="fas fa-map-marked-alt"></i>
-                <h3>100% Offline Maps</h3>
-                <p>No internet? No problem. Access full map data and navigation without roaming costs.</p>
+                <h3 id="f1-title">100% Offline Maps</h3>
+                <p id="f1-desc">No internet? No problem. Access full map data and navigation without roaming costs.</p>
             </div>
             <div class="feature-card">
                 <i class="fas fa-building"></i>
-                <h3>3D Buildings</h3>
-                <p>Orient yourself easily with detailed 3D models of major city landmarks and high-rises.</p>
+                <h3 id="f2-title">3D Buildings</h3>
+                <p id="f2-desc">Orient yourself easily with detailed 3D models of major city landmarks and high-rises.</p>
             </div>
             <div class="feature-card">
                 <i class="fas fa-tag"></i>
-                <h3>Exclusive Deals</h3>
-                <p>Unlock "Super Discounts" at the best restaurants, cafes, and spas in town.</p>
+                <h3 id="f3-title">Exclusive Deals</h3>
+                <p id="f3-desc">Unlock "Super Discounts" at the best restaurants, cafes, and spas in town.</p>
             </div>
         </section>
 
         <section id="support" style="padding: 80px 0; text-align: center;">
             <div class="container">
-                <h2>Customer Support</h2>
-                <p style="margin-top: 1rem; color: var(--text-dim);">Need help? Reach out to us anytime.</p>
+                <h2 id="support-title">Customer Support</h2>
+                <p id="support-desc" style="margin-top: 1rem; color: var(--text-dim);">Need help? Reach out to us anytime.</p>
                 <div style="margin-top: 2rem;">
                     <a href="mailto:rchcoding@gmail.com" style="color: var(--primary); font-size: 1.5rem; text-decoration: none; font-weight: 700;">rchcoding@gmail.com</a>
                 </div>
@@ -66,13 +81,189 @@
     <footer>
         <div class="container">
             <div class="footer-links">
-                <a href="index.html">Home</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="#support">Support</a>
-                <a href="https://tourcity.info/partner/" target="_blank" style="color: var(--accent);">Partnership</a>
+                <a href="index.html" id="nav-home">Home</a>
+                <a href="privacy.html" id="nav-privacy">Privacy Policy</a>
+                <a href="#support" id="nav-footer-support">Support</a>
+                <a href="https://tourcity.info/partner/" target="_blank" id="nav-partnership" style="color: var(--accent);">Partnership</a>
             </div>
             <p style="color: rgba(255,255,255,0.2); font-size: 0.8rem;">&copy; 2026 TourCity Team. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        const translations = {
+            ru: {
+                pageTitle: "TourCity | Ваш офлайн-гид по Нячангу",
+                heroTitle: "Исследуйте Нячанг<br><span style=\"color: var(--primary);\">Офлайн и без забот</span>",
+                heroDesc: "Самая детальная офлайн-карта с 3D-зданиями, проверенными местами и эксклюзивными скидками для вашего идеального отдыха.",
+                downloadBtn: "Скачать для iOS",
+                feature1Title: "100% Офлайн-карты",
+                feature1Desc: "Нет интернета? Не проблема. Навигация и полный доступ к карте работают без роуминга.",
+                feature2Title: "3D-Здания",
+                feature2Desc: "Легко ориентируйтесь в городе благодаря объёмным 3D-моделям известных достопримечательностей.",
+                feature3Title: "Эксклюзивные скидки",
+                feature3Desc: "Получайте супер-скидки и подарки в лучших ресторанах, кафе и СПА-салонах города.",
+                supportTitle: "Служба поддержки",
+                supportDesc: "Есть вопросы? Свяжитесь с нами в любое время.",
+                navSupport: "Поддержка",
+                navHome: "Главная",
+                navPrivacy: "Политика конфиденциальности",
+                navPartnership: "Партнёрство"
+            },
+            en: {
+                pageTitle: "TourCity | Your Offline Guide to Nha Trang",
+                heroTitle: "Explore Nha Trang<br><span style=\"color: var(--primary);\">Offline & Effortless</span>",
+                heroDesc: "The most detailed offline map with 3D buildings, curated local guides, and exclusive discounts for your perfect vacation.",
+                downloadBtn: "Download for iOS",
+                feature1Title: "100% Offline Maps",
+                feature1Desc: "No internet? No problem. Access full map data and navigation without roaming costs.",
+                feature2Title: "3D Buildings",
+                feature2Desc: "Orient yourself easily with detailed 3D models of major city landmarks and high-rises.",
+                feature3Title: "Exclusive Deals",
+                feature3Desc: "Unlock \"Super Discounts\" at the best restaurants, cafes, and spas in town.",
+                supportTitle: "Customer Support",
+                supportDesc: "Need help? Reach out to us anytime.",
+                navSupport: "Support",
+                navHome: "Home",
+                navPrivacy: "Privacy Policy",
+                navPartnership: "Partnership"
+            },
+            vi: {
+                pageTitle: "TourCity | Hướng dẫn ngoại tuyến cho Nha Trang",
+                heroTitle: "Khám phá Nha Trang<br><span style=\"color: var(--primary);\">Ngoại tuyến & Dễ dàng</span>",
+                heroDesc: "Bản đồ ngoại tuyến chi tiết nhất với tòa nhà 3D, địa điểm chọn lọc và giảm giá độc quyền cho kỳ nghỉ hoàn hảo.",
+                downloadBtn: "Tải xuống cho iOS",
+                feature1Title: "Bản đồ 100% ngoại tuyến",
+                feature1Desc: "Không có internet? Không sao. Truy cập bản đồ và dẫn đường không tốn cước roaming.",
+                feature2Title: "Tòa nhà 3D",
+                feature2Desc: "Dễ dàng định hướng với mô hình 3D chi tiết của các địa điểm nổi tiếng.",
+                feature3Title: "Ưu đãi độc quyền",
+                feature3Desc: "Nhận ưu đãi và giảm giá đặc biệt tại các nhà hàng, quán cafe và spa tốt nhất.",
+                supportTitle: "Hỗ trợ khách hàng",
+                supportDesc: "Cần trợ giúp? Liên hệ với chúng tôi bất cứ lúc nào.",
+                navSupport: "Hỗ trợ",
+                navHome: "Trang chủ",
+                navPrivacy: "Chính sách bảo mật",
+                navPartnership: "Đối tác"
+            },
+            ko: {
+                pageTitle: "TourCity | 나트랑 오프라인 가이드",
+                heroTitle: "나트랑을 탐험하세요<br><span style=\"color: var(--primary);\">오프라인으로 편하게</span>",
+                heroDesc: "3D 건물, 엄선된 추천 장소, 독점 할인 혜택이 담긴 가장 상세한 오프라인 지도.",
+                downloadBtn: "iOS용 다운로드",
+                feature1Title: "100% 오프라인 지도",
+                feature1Desc: "인터넷이 없어도 걱정 마세요. 로밍 비용 없이 전체 지도와 길안내를 이용하세요.",
+                feature2Title: "3D 건물 모델링",
+                feature2Desc: "주요 명소와 건물의 상세한 3D 모델로 도시에서 쉽게 위치를 찾으세요.",
+                feature3Title: "독점 할인 혜택",
+                feature3Desc: "도시 최고의 레스토랑, 카페, 스파에서 특별 할인 혜택을 누리세요.",
+                supportTitle: "고객 지원",
+                supportDesc: "도움이 필요하신가요? 언제든지 문의해 주세요.",
+                navSupport: "지원",
+                navHome: "홈",
+                navPrivacy: "개인정보 처리방침",
+                navPartnership: "파트너십"
+            },
+            zh: {
+                pageTitle: "TourCity | 芽庄离线指南",
+                heroTitle: "探索芽庄<br><span style=\"color: var(--primary);\">离线无忧</span>",
+                heroDesc: "拥有3D建筑、精选本地指南及专属优惠的最详细离线地图，让您的假期更完美。",
+                downloadBtn: "下载 iOS 版",
+                feature1Title: "100% 离线地图",
+                feature1Desc: "没有网络？没问题。无需漫游费用即可查看完整地图并导航。",
+                feature2Title: "3D 建筑地标",
+                feature2Desc: "地标与高楼的精选3D模型，让您在城市中轻松辨别方向。",
+                feature3Title: "专属优惠特惠",
+                feature3Desc: "在全市最佳餐厅、咖啡馆和水疗中心解锁超级折扣。",
+                supportTitle: "客户支持",
+                supportDesc: "需要帮助？随时与我们联系。",
+                navSupport: "支持",
+                navHome: "首页",
+                navPrivacy: "隐私政策",
+                navPartnership: "合作伙伴"
+            },
+            fr: {
+                pageTitle: "TourCity | Votre guide hors ligne pour Nha Trang",
+                heroTitle: "Explorez Nha Trang<br><span style=\"color: var(--primary);\">Hors ligne & Sans effort</span>",
+                heroDesc: "La carte hors ligne la plus détaillée avec bâtiments 3D, guides locaux sélectionnés et réductions exclusives pour vos vacances.",
+                downloadBtn: "Télécharger pour iOS",
+                feature1Title: "Cartes 100% Hors Ligne",
+                feature1Desc: "Pas d'Internet ? Pas de problème. Accédez à la carte et à la navigation sans frais d'itinérance.",
+                feature2Title: "Bâtiments en 3D",
+                feature2Desc: "Orientez-vous facilement grâce aux modèles 3D détaillés des monuments de la ville.",
+                feature3Title: "Offres Exclusives",
+                feature3Desc: "Profitez de super réductions dans les meilleurs restaurants, cafés et spas de la ville.",
+                supportTitle: "Support Client",
+                supportDesc: "Besoin d'aide ? Contactez-nous à tout moment.",
+                navSupport: "Support",
+                navHome: "Accueil",
+                navPrivacy: "Politique de confidentialité",
+                navPartnership: "Partenariat"
+            },
+            es: {
+                pageTitle: "TourCity | Tu guía sin conexión de Nha Trang",
+                heroTitle: "Explora Nha Trang<br><span style=\"color: var(--primary);\">Sin conexión y Fácil</span>",
+                heroDesc: "El mapa sin conexión más detallado con edificios 3D, guías locales seleccionadas y descuentos exclusivos para tus vacaciones.",
+                downloadBtn: "Descargar para iOS",
+                feature1Title: "Mapas 100% Sin Conexión",
+                feature1Desc: "¿Sin internet? Sin problema. Accede a mapas y navegación sin gastos de roaming.",
+                feature2Title: "Edificios en 3D",
+                feature2Desc: "Oriéntate fácilmente con modelos 3D detallados de los puntos de interés de la ciudad.",
+                feature3Title: "Ofertas Exclusivas",
+                feature3Desc: "Desbloquea súper descuentos en los mejores restaurantes, cafés y spas de la ciudad.",
+                supportTitle: "Soporte al Cliente",
+                supportDesc: "¿Necesitas ayuda? Contáctanos en cualquier momento.",
+                navSupport: "Soporte",
+                navHome: "Inicio",
+                navPrivacy: "Política de privacidad",
+                navPartnership: "Asociación"
+            }
+        };
+
+        function detectLanguage() {
+            const saved = localStorage.getItem('tourcity_site_lang');
+            if (saved && translations[saved]) return saved;
+
+            const browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().split('-')[0];
+            if (translations[browserLang]) return browserLang;
+
+            return 'en'; // fallback
+        }
+
+        function applyTranslations(lang) {
+            const t = translations[lang] || translations.en;
+            document.documentElement.lang = lang;
+            document.getElementById('doc-title').innerText = t.pageTitle;
+            document.getElementById('hero-title').innerHTML = t.heroTitle;
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('download-btn-text').innerText = t.downloadBtn;
+            document.getElementById('f1-title').innerText = t.feature1Title;
+            document.getElementById('f1-desc').innerText = t.feature1Desc;
+            document.getElementById('f2-title').innerText = t.feature2Title;
+            document.getElementById('f2-desc').innerText = t.feature2Desc;
+            document.getElementById('f3-title').innerText = t.feature3Title;
+            document.getElementById('f3-desc').innerText = t.feature3Desc;
+            document.getElementById('support-title').innerText = t.supportTitle;
+            document.getElementById('support-desc').innerText = t.supportDesc;
+            document.getElementById('nav-support').innerText = t.navSupport;
+            document.getElementById('nav-footer-support').innerText = t.navSupport;
+            document.getElementById('nav-home').innerText = t.navHome;
+            document.getElementById('nav-privacy').innerText = t.navPrivacy;
+            document.getElementById('nav-partnership').innerText = t.navPartnership;
+
+            document.getElementById('lang-select').value = lang;
+        }
+
+        function changeLanguage(lang) {
+            localStorage.setItem('tourcity_site_lang', lang);
+            applyTranslations(lang);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialLang = detectLanguage();
+            applyTranslations(initialLang);
+        });
+    </script>
 </body>
 </html>
