@@ -22,17 +22,22 @@
             </a>
             
             <div class="nav-right">
-                <!-- Custom Styled Language Picker -->
-                <div class="lang-selector-wrapper">
-                    <select id="lang-select" class="lang-selector" onchange="changeLanguage(this.value)">
-                        <option value="ru">🇷🇺 RU</option>
-                        <option value="en">🇺🇸 EN</option>
-                        <option value="vi">🇻🇳 VI</option>
-                        <option value="ko">🇰🇷 KO</option>
-                        <option value="zh">🇨🇳 ZH</option>
-                        <option value="fr">🇫🇷 FR</option>
-                        <option value="es">🇪🇸 ES</option>
-                    </select>
+                <!-- Custom Dark Gold Glassmorphism Dropdown -->
+                <div class="custom-lang-dropdown" id="custom-lang-dropdown">
+                    <button type="button" class="lang-trigger" id="lang-trigger" onclick="toggleLangMenu(event)">
+                        <span id="current-lang-flag">🇷🇺</span>
+                        <span id="current-lang-code">RU</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </button>
+                    <div class="lang-menu" id="lang-menu">
+                        <div class="lang-option" data-lang="ru" onclick="selectLanguage('ru')"><span>🇷🇺</span> Русский</div>
+                        <div class="lang-option" data-lang="en" onclick="selectLanguage('en')"><span>🇺🇸</span> English</div>
+                        <div class="lang-option" data-lang="vi" onclick="selectLanguage('vi')"><span>🇻🇳</span> Tiếng Việt</div>
+                        <div class="lang-option" data-lang="ko" onclick="selectLanguage('ko')"><span>🇰🇷</span> 한국어</div>
+                        <div class="lang-option" data-lang="zh" onclick="selectLanguage('zh')"><span>🇨🇳</span> 中文</div>
+                        <div class="lang-option" data-lang="fr" onclick="selectLanguage('fr')"><span>🇫🇷</span> Français</div>
+                        <div class="lang-option" data-lang="es" onclick="selectLanguage('es')"><span>🇪🇸</span> Español</div>
+                    </div>
                 </div>
                 <a href="#support" id="nav-support" style="color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 0.9rem;">Support</a>
             </div>
@@ -232,6 +237,21 @@
             return 'en'; // fallback
         }
 
+        const langFlags = {
+            ru: '🇷🇺', en: '🇺🇸', vi: '🇻🇳', ko: '🇰🇷', zh: '🇨🇳', fr: '🇫🇷', es: '🇪🇸'
+        };
+
+        function toggleLangMenu(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('custom-lang-dropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        function selectLanguage(lang) {
+            document.getElementById('custom-lang-dropdown').classList.remove('open');
+            changeLanguage(lang);
+        }
+
         function applyTranslations(lang) {
             const t = translations[lang] || translations.en;
             document.documentElement.lang = lang;
@@ -253,13 +273,32 @@
             document.getElementById('nav-privacy').innerText = t.navPrivacy;
             document.getElementById('nav-partnership').innerText = t.navPartnership;
 
-            document.getElementById('lang-select').value = lang;
+            // Update Custom Dropdown Trigger
+            document.getElementById('current-lang-flag').innerText = langFlags[lang] || '🇺🇸';
+            document.getElementById('current-lang-code').innerText = lang.toUpperCase();
+
+            // Update Active class on menu items
+            document.querySelectorAll('.lang-option').forEach(opt => {
+                if (opt.getAttribute('data-lang') === lang) {
+                    opt.classList.add('active');
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
         }
 
         function changeLanguage(lang) {
             localStorage.setItem('tourcity_site_lang', lang);
             applyTranslations(lang);
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('custom-lang-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
