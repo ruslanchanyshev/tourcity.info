@@ -195,9 +195,10 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
             fontWeight: '700',
             pointerEvents: 'none'
           }}>
-            <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '-0.02em' }}>02:40</span>
+            {/* Left: Time */}
+            <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '-0.02em', color: '#FFFFFF' }}>02:40</span>
             
-            {/* Dynamic Island Notch Pill */}
+            {/* Center: Dynamic Island Notch Pill */}
             <div style={{
               width: '96px',
               height: '24px',
@@ -209,24 +210,49 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
               top: '8px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justify: 'flex-end',
               paddingRight: '8px'
             }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#111726', border: '1px solid #1a2233' }} />
             </div>
 
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', fontSize: '11px' }}>
-              <Wifi size={12} color="#ffffff" />
-              <div style={{
-                width: '22px',
-                height: '11px',
-                border: '1px solid rgba(255,255,255,0.8)',
-                borderRadius: '3px',
-                padding: '1px',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <div style={{ width: '60%', height: '100%', backgroundColor: '#ffffff', borderRadius: '1px' }} />
+            {/* Right: Cellular, 3-Wave Wi-Fi, and Battery */}
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              {/* Cellular Signal (4 rounded bars) */}
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="8.5" width="2.5" height="2.5" rx="0.6" fill="#FFFFFF" />
+                <rect x="4" y="6" width="2.5" height="5" rx="0.6" fill="#FFFFFF" />
+                <rect x="8" y="3.5" width="2.5" height="7.5" rx="0.6" fill="#FFFFFF" />
+                <rect x="12" y="1" width="2.5" height="10" rx="0.6" fill="#FFFFFF" />
+              </svg>
+
+              {/* iPhone 3-Wave Wi-Fi Icon */}
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.8 3.5C2.8 1.6 5.3 0.6 8 0.6C10.7 0.6 13.2 1.6 15.2 3.5" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
+                <path d="M3.2 6.0C4.5 4.7 6.2 4.0 8.0 4.0C9.8 4.0 11.5 4.7 12.8 6.0" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
+                <path d="M5.5 8.4C6.2 7.7 7.1 7.3 8.0 7.3C8.9 7.3 9.8 7.7 10.5 8.4" stroke="#FFFFFF" strokeWidth="1.4" strokeLinecap="round" />
+                <circle cx="8" cy="10.6" r="1.1" fill="#FFFFFF" />
+              </svg>
+
+              {/* iPhone Battery Icon */}
+              <div style={{ display: 'flex', alignItems: 'center', marginLeft: '1px' }}>
+                <div style={{
+                  width: '21px',
+                  height: '11px',
+                  border: '1px solid rgba(255,255,255,0.9)',
+                  borderRadius: '3px',
+                  padding: '1.5px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <div style={{ width: '70%', height: '100%', backgroundColor: '#ffffff', borderRadius: '1px' }} />
+                </div>
+                <div style={{
+                  width: '1.5px',
+                  height: '4px',
+                  backgroundColor: 'rgba(255,255,255,0.7)',
+                  borderRadius: '0 1px 1px 0'
+                }} />
               </div>
             </div>
           </div>
