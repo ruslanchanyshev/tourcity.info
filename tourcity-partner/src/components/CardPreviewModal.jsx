@@ -180,23 +180,27 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
           {/* Authentic iPhone Status Bar & Dynamic Island */}
           <div style={{
             height: '44px',
+            width: '100%',
             backgroundColor: 'transparent',
-            display: 'flex',
-            justify: 'space-between',
-            alignItems: 'center',
-            padding: '0 22px',
             position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             zIndex: 20,
-            color: '#ffffff',
-            fontSize: '12px',
-            fontWeight: '700',
             pointerEvents: 'none'
           }}>
-            {/* Left: Time */}
-            <span style={{ fontSize: '13px', fontWeight: '800', letterSpacing: '-0.02em', color: '#FFFFFF' }}>02:40</span>
+            {/* Left: Time (Anchored to Left Corner) */}
+            <div style={{
+              position: 'absolute',
+              left: '22px',
+              top: '12px',
+              fontSize: '13px',
+              fontWeight: '800',
+              letterSpacing: '-0.02em',
+              color: '#FFFFFF'
+            }}>
+              02:40
+            </div>
             
             {/* Center: Dynamic Island Notch Pill */}
             <div style={{
@@ -210,14 +214,21 @@ const CardPreviewModal = ({ poi, formValues, uiLang = 'ru', onClose }) => {
               top: '8px',
               display: 'flex',
               alignItems: 'center',
-              justify: 'flex-end',
+              justifyContent: 'flex-end',
               paddingRight: '8px'
             }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#111726', border: '1px solid #1a2233' }} />
             </div>
 
-            {/* Right: Cellular, 3-Wave Wi-Fi, and Battery */}
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            {/* Right: Cellular Signal, 3-Wave Wi-Fi, and Battery (Anchored to Right Corner) */}
+            <div style={{
+              position: 'absolute',
+              right: '22px',
+              top: '13px',
+              display: 'flex',
+              gap: '6px',
+              alignItems: 'center'
+            }}>
               {/* Cellular Signal (4 rounded bars) */}
               <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="0" y="8.5" width="2.5" height="2.5" rx="0.6" fill="#FFFFFF" />
