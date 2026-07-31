@@ -22,15 +22,22 @@
             </a>
             
             <div class="nav-right">
-                <!-- Compact Flag Pills Bar -->
-                <div class="lang-flags-bar">
-                    <button type="button" class="flag-btn" data-lang="ru" onclick="changeLanguage('ru')" title="Русский">🇷🇺 <span class="flag-code">RU</span></button>
-                    <button type="button" class="flag-btn" data-lang="en" onclick="changeLanguage('en')" title="English">🇺🇸 <span class="flag-code">EN</span></button>
-                    <button type="button" class="flag-btn" data-lang="vi" onclick="changeLanguage('vi')" title="Tiếng Việt">🇻🇳 <span class="flag-code">VI</span></button>
-                    <button type="button" class="flag-btn" data-lang="ko" onclick="changeLanguage('ko')" title="한국어">🇰🇷 <span class="flag-code">KO</span></button>
-                    <button type="button" class="flag-btn" data-lang="zh" onclick="changeLanguage('zh')" title="中文">🇨🇳 <span class="flag-code">ZH</span></button>
-                    <button type="button" class="flag-btn" data-lang="fr" onclick="changeLanguage('fr')" title="Français">🇫🇷 <span class="flag-code">FR</span></button>
-                    <button type="button" class="flag-btn" data-lang="es" onclick="changeLanguage('es')" title="Español">🇪🇸 <span class="flag-code">ES</span></button>
+                <!-- Custom Dark Gold Glassmorphism Dropdown -->
+                <div class="custom-lang-dropdown" id="custom-lang-dropdown">
+                    <button type="button" class="lang-trigger" id="lang-trigger" onclick="toggleLangMenu(event)">
+                        <span id="current-lang-flag">🇷🇺</span>
+                        <span id="current-lang-code">RU</span>
+                        <i class="fas fa-chevron-down arrow"></i>
+                    </button>
+                    <div class="lang-menu" id="lang-menu">
+                        <div class="lang-option" data-lang="ru" onclick="selectLanguage('ru')"><span>🇷🇺</span> Русский</div>
+                        <div class="lang-option" data-lang="en" onclick="selectLanguage('en')"><span>🇺🇸</span> English</div>
+                        <div class="lang-option" data-lang="vi" onclick="selectLanguage('vi')"><span>🇻🇳</span> Tiếng Việt</div>
+                        <div class="lang-option" data-lang="ko" onclick="selectLanguage('ko')"><span>🇰🇷</span> 한국어</div>
+                        <div class="lang-option" data-lang="zh" onclick="selectLanguage('zh')"><span>🇨🇳</span> 中文</div>
+                        <div class="lang-option" data-lang="fr" onclick="selectLanguage('fr')"><span>🇫🇷</span> Français</div>
+                        <div class="lang-option" data-lang="es" onclick="selectLanguage('es')"><span>🇪🇸</span> Español</div>
+                    </div>
                 </div>
                 <a href="#support" id="nav-support" style="color: var(--text-dim); text-decoration: none; font-weight: 700; font-size: 0.9rem;">Support</a>
             </div>
@@ -230,6 +237,21 @@
             return 'en'; // fallback
         }
 
+        const langFlags = {
+            ru: '🇷🇺', en: '🇺🇸', vi: '🇻🇳', ko: '🇰🇷', zh: '🇨🇳', fr: '🇫🇷', es: '🇪🇸'
+        };
+
+        function toggleLangMenu(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('custom-lang-dropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        function selectLanguage(lang) {
+            document.getElementById('custom-lang-dropdown').classList.remove('open');
+            changeLanguage(lang);
+        }
+
         function applyTranslations(lang) {
             const t = translations[lang] || translations.en;
             document.documentElement.lang = lang;
@@ -251,12 +273,16 @@
             document.getElementById('nav-privacy').innerText = t.navPrivacy;
             document.getElementById('nav-partnership').innerText = t.navPartnership;
 
-            // Update Active class on flag buttons
-            document.querySelectorAll('.flag-btn').forEach(btn => {
-                if (btn.getAttribute('data-lang') === lang) {
-                    btn.classList.add('active');
+            // Update Trigger button text
+            document.getElementById('current-lang-flag').innerText = langFlags[lang] || '🇺🇸';
+            document.getElementById('current-lang-code').innerText = lang.toUpperCase();
+
+            // Update Active class on menu items
+            document.querySelectorAll('.lang-option').forEach(opt => {
+                if (opt.getAttribute('data-lang') === lang) {
+                    opt.classList.add('active');
                 } else {
-                    btn.classList.remove('active');
+                    opt.classList.remove('active');
                 }
             });
         }
@@ -265,6 +291,14 @@
             localStorage.setItem('tourcity_site_lang', lang);
             applyTranslations(lang);
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('custom-lang-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
 
         // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
