@@ -40,76 +40,73 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(15, 15, 15, 0.92);
+    background: rgba(15, 15, 15, 0.95);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 10px 0;
+    padding: 16px 0;
     width: 100%;
 }
 
-.header-content {
+.header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-}
-
-.header-top-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    gap: 20px;
 }
 
 .logo-container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     text-decoration: none;
     color: var(--text);
     flex-shrink: 0;
 }
 
 .logo-container img {
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    display: block;
 }
 
 .logo-container span {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: #ffffff;
 }
 
-/* Restore Support Link to Original Design (No 2000s blue hyperlinks!) */
-.nav-support-link, #nav-support {
-    color: var(--text-dim) !important;
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Explicit style for Support Link - NEVER blue or purple */
+a.nav-support-link, a#nav-support, header a.nav-support-link {
+    color: #a0a0a0 !important;
     text-decoration: none !important;
     font-weight: 700 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.95rem !important;
     transition: color 0.2s ease !important;
+    cursor: pointer;
     flex-shrink: 0;
 }
 
-.nav-support-link:hover, #nav-support:hover {
+a.nav-support-link:hover, a#nav-support:hover {
     color: var(--primary) !important;
-}
-
-.header-right-group {
-    display: flex;
-    align-items: center;
-    gap: 16px;
 }
 
 /* Single Horizontal Line Language Buttons Bar */
 .lang-flags-bar {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     background: rgba(18, 14, 11, 0.85);
     border: 1px solid rgba(212, 160, 23, 0.25);
-    padding: 4px 6px;
+    padding: 5px 8px;
     border-radius: 12px;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -128,9 +125,9 @@ header {
     background: #1c1612;
     border: 1px solid rgba(212, 160, 23, 0.35);
     color: var(--primary);
-    padding: 4px 8px;
+    padding: 6px 10px;
     border-radius: 8px;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     font-weight: 800;
     cursor: pointer;
     display: inline-flex;
@@ -141,7 +138,7 @@ header {
 }
 
 .flag-btn .flag-code {
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     color: var(--primary);
     font-weight: 900;
 }
@@ -168,24 +165,24 @@ header {
 
 /* Hero Section */
 .hero {
-    padding: 80px 0 60px;
+    padding: 90px 0 70px;
     text-align: center;
     background: radial-gradient(circle at 50% 0%, rgba(212, 160, 23, 0.15) 0%, transparent 65%);
 }
 
 .hero h1 {
-    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
     font-weight: 900;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
     letter-spacing: -0.03em;
     line-height: 1.15;
 }
 
 .hero p {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
     color: var(--text-dim);
     max-width: 680px;
-    margin: 0 auto 2.2rem;
+    margin: 0 auto 2.5rem;
     font-weight: 500;
     line-height: 1.6;
 }
@@ -196,10 +193,10 @@ header {
     gap: 10px;
     background: linear-gradient(135deg, #d4a017 0%, #e5ae1a 100%);
     color: #000;
-    padding: 1rem 2.4rem;
+    padding: 1.1rem 2.6rem;
     border-radius: 16px;
     font-weight: 900;
-    font-size: 1.02rem;
+    font-size: 1.05rem;
     text-decoration: none;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 6px 24px rgba(212, 160, 23, 0.3);
@@ -217,16 +214,16 @@ header {
 
 /* Features Grid */
 .features {
-    padding: 50px 0 80px;
+    padding: 60px 0 90px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.8rem;
+    gap: 2rem;
 }
 
 .feature-card {
     background: linear-gradient(180deg, rgba(30, 30, 34, 0.8) 0%, rgba(20, 20, 22, 0.9) 100%);
-    padding: 2.2rem 1.8rem;
-    border-radius: 22px;
+    padding: 2.5rem 2rem;
+    border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
@@ -239,58 +236,58 @@ header {
 }
 
 .feature-card i {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--primary);
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.4rem;
     display: inline-block;
 }
 
 .feature-card h3 {
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.8rem;
     letter-spacing: -0.02em;
 }
 
 .feature-card p {
     color: var(--text-dim);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     line-height: 1.6;
 }
 
 /* Support Section */
 #support {
-    padding: 70px 0;
+    padding: 80px 0;
     text-align: center;
     background: radial-gradient(circle at 50% 100%, rgba(212, 160, 23, 0.08) 0%, transparent 60%);
 }
 
 #support h2 {
-    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 900;
     letter-spacing: -0.02em;
 }
 
 /* Footer & Legal */
 footer {
-    padding: 45px 0;
+    padding: 50px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     text-align: center;
     background: rgba(10, 10, 12, 0.8);
 }
 
 .footer-links {
-    margin-bottom: 1.4rem;
+    margin-bottom: 1.5rem;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.4rem;
+    gap: 1.5rem;
 }
 
 .footer-links a {
     color: var(--text-dim);
     text-decoration: none;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 700;
     transition: color 0.2s;
 }
@@ -317,66 +314,34 @@ footer {
     color: var(--text-dim);
 }
 
-/* Desktop Header Layout (> 768px) */
-@media (min-width: 769px) {
-    .header-content {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-}
-
-/* Compact Mobile Breakpoint (<= 768px) - 32 Resolution Scaling */
+/* Mobile Responsiveness (max-width: 768px) */
 @media (max-width: 768px) {
     header {
-        padding: 6px 0;
+        padding: 10px 0;
     }
     .container { 
         padding: 0 0.8rem; 
     }
-    .header-content {
+    .header-container {
         flex-direction: column;
         align-items: stretch;
-        gap: 6px;
+        gap: 10px;
     }
-    .header-top-row {
-        display: flex;
-        align-items: center;
+    .nav-right {
         justify-content: space-between;
-        width: 100%;
-    }
-    .header-right-group {
+        gap: 10px;
         width: 100%;
     }
     .lang-flags-bar {
-        width: 100%;
-        padding: 3px 4px;
+        padding: 3px 5px;
         gap: 4px;
-        border-radius: 10px;
+        flex: 1;
     }
-    /* Compact ~32 scale button size for phones */
     .flag-btn {
-        padding: 3px 6px;
+        padding: 4px 7px;
         font-size: 0.78rem;
-        border-radius: 6px;
-        gap: 3px;
     }
     .flag-btn .flag-code {
         font-size: 0.68rem;
-    }
-    .hero {
-        padding: 35px 0 25px;
-    }
-    .btn-primary {
-        padding: 0.85rem 1.8rem;
-        font-size: 0.95rem;
-        width: 100%;
-        justify-content: center;
-    }
-    .features {
-        padding: 30px 0 45px;
-        gap: 1rem;
-    }
-    .feature-card {
-        padding: 1.5rem 1.2rem;
     }
 }
