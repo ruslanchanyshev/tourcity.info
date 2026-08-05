@@ -336,19 +336,21 @@ const Dashboard = () => {
               onToggle={() => toggleSection('description')}
             />
 
-            {/* Event Section */}
-            <EventSection
-              register={register}
-              control={control}
-              setValue={setValue}
-              watch={watch}
-              t={t}
-              uiLang={uiLang}
-              expanded={expandedSections.event}
-              onToggle={() => toggleSection('event')}
-              onDeleteEvent={handleDeleteEvent}
-              deletingEvent={deletingEvent}
-            />
+            {/* Event Section - Only available for private service providers */}
+            {localStorage.getItem('partner_mode') === 'services' && (
+              <EventSection
+                register={register}
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                t={t}
+                uiLang={uiLang}
+                expanded={expandedSections.event}
+                onToggle={() => toggleSection('event')}
+                onDeleteEvent={handleDeleteEvent}
+                deletingEvent={deletingEvent}
+              />
+            )}
 
             {/* Coupon/Discount Section */}
             <DiscountSection
